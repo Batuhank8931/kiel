@@ -1,0 +1,14 @@
+
+crontab -e
+
+
+@reboot sleep 20 && export DISPLAY=:0 && cd /home/user/Desktop/script && python3 open_url.py >> /home/user/Desktop/script/open_url.log 2>&1
+
+
+chmod +x /home/user/Desktop/script/open_url.py
+chmod 666 /home/user/Desktop/script/open_url.log
+
+
+sleep 20 && export DISPLAY=:0 && cd /home/user/Desktop/script && python3 open_url.py
+
+sudo reboot

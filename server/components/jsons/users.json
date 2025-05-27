@@ -1,0 +1,80 @@
+[
+  {
+    "seriNo": "2",
+    "name": "mehmet",
+    "surname": "mehmet",
+    "barcode": "UN2meme"
+  },
+  {
+    "seriNo": "4",
+    "name": "necmi",
+    "surname": "celal",
+    "barcode": "UN4nece"
+  },
+  {
+    "seriNo": "5",
+    "name": "selim",
+    "surname": "kara",
+    "barcode": "UN5seka"
+  },
+  {
+    "seriNo": "6",
+    "name": "demir",
+    "surname": "celik",
+    "barcode": "UN6dece"
+  },
+  {
+    "seriNo": "7",
+    "name": "deniz",
+    "surname": "senol",
+    "barcode": "UN7dese"
+  },
+  {
+    "seriNo": "8",
+    "name": "cemil",
+    "surname": "saglam",
+    "barcode": "UN8cesa"
+  },
+  {
+    "seriNo": "9",
+    "name": "berkay",
+    "surname": "beyaz",
+    "barcode": "UN9bebe"
+  },
+  {
+    "seriNo": "10",
+    "name": "taner",
+    "surname": "sadik",
+    "barcode": "UN10tasa"
+  },
+  {
+    "seriNo": "11",
+    "name": "ali",
+    "surname": "veli",
+    "barcode": "UN11alve"
+  },
+  {
+    "seriNo": "155",
+    "name": "serdar",
+    "surname": "koçyiğit",
+    "barcode": "UN155seko"
+  },
+  {
+    "seriNo": "0004",
+    "name": "MEHMET",
+    "surname": "GEREZ",
+    "barcode": "UN0004mege"
+  },
+  {
+    "seriNo": "0025",
+    "name": "ERSIN",
+    "surname": "KARALIOĞLU",
+    "barcode": "UN0025erka"
+  },
+  {
+    "seriNo": "007",
+    "name": "JAMES",
+    "surname": "BOND",
+    "barcode": "UN007jabo"
+  }
+]

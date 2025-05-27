@@ -1,0 +1,196 @@
+{
+  "station_1": {
+    "english": [
+      "Take the Bart chassis from the Carts and place it on the Assembly Arm",
+      "Tilt Back the seat and attach the sticker to the profile then raise the seat up",
+      "Place the fire plate Bracket",
+      "Take the shell from the Carts and place it on the chassis (1 seat).",
+      "Take the shell from the Carts and place it on the chassis (2 seat).",
+      "Install the spacer"
+    ],
+    "spanish": [
+      "Tome el bastidor de Bart del carrito y colóquelo en el brazo de ensamblaje",
+      "Incline el asiento hacia atrás, coloque la etiqueta en el perfil y luego suba el asiento",
+      "Coloque el soporte de la placa contra incendios",
+      "Tome la carcasa del carrito y colóquela sobre el bastidor (1 asiento)",
+      "Tome la carcasa del carrito y colóquela sobre el bastidor (2 asientos)",
+      "Instale el separador"
+    ],
+    "projectData": [
+      "proj1kieltest",
+      "prj03",
+      "code",
+      3
+    ],
+    "stepTime": [
+      13,
+      30,
+      22,
+      70,
+      70,
+      9
+    ]
+  },
+  "station_2": {
+    "english": [
+      "Assemble the spacer fasteners"
+    ],
+    "spanish": [
+      "Ensamble los sujetadores del separador"
+    ],
+    "projectData": [
+      "proj1kieltest",
+      "prj03",
+      "code",
+      3
+    ],
+    "stepTime": [
+      187
+    ]
+  },
+  "station_3": {
+    "english": [
+      "Tighten the spacer bolts.",
+      "Torque the spacer bolts.",
+      "Mark it the Spacer Fastners ",
+      "Mount the grab handles on the shell (1 Seat)",
+      "Mount the grab handles on the shell (2 Seat)"
+    ],
+    "spanish": [
+      "Ajuste los pernos del separador",
+      "Aplique par de apriete a los pernos del separador",
+      "Marque los sujetadores del separador",
+      "Monte las manijas en la carcasa (1 asiento)",
+      "Monte las manijas en la carcasa (2 asientos)"
+    ],
+    "projectData": [
+      "proj1kieltest",
+      "prj03",
+      "code",
+      3
+    ],
+    "stepTime": [
+      60,
+      65,
+      20,
+      22,
+      22
+    ]
+  },
+  "station_4": {
+    "english": [
+      "Tighten the spacer bolts.",
+      "Torque the spacer bolts.",
+      "Mark it the Spacer Fastners ",
+      "Mount the grab handles on the shell (1 Seat)",
+      "Mount the grab handles on the shell (2 Seat)"
+    ],
+    "spanish": [
+      "Ajuste los pernos del separador",
+      "Aplique par de apriete a los pernos del separador",
+      "Marque los sujetadores del separador",
+      "Monte las manijas en la carcasa (1 asiento)",
+      "Monte las manijas en la carcasa (2 asientos)"
+    ],
+    "projectData": [
+      "proj1kieltest",
+      "prj03",
+      "code",
+      3
+    ],
+    "stepTime": [
+      60,
+      65,
+      20,
+      22,
+      22
+    ]
+  },
+  "station_5": {
+    "english": [
+      "Tighten the shell connection bolts (1 Seat)",
+      "Tighten  the shell connection bolts (2 Seat)",
+      "Torque the shell connection bolts (1 Seat)",
+      "Torque the shell connection bolts (2 Seat)",
+      "Clean the Loctite",
+      "Mount the backrest pad to the shelle (1 Seat)",
+      "Mount the backrest pad to the shelle (2 Seat)",
+      "Mark it the Shells Fastners (1 Seat)",
+      "Mark it the Shells Fastners (2 Seat)",
+      " Assemble the seat cushion clips. (1 Seat)",
+      " Assemble the seat cushion clips. (2 Seat)"
+    ],
+    "spanish": [
+      "Ajuste los pernos de conexión de la carcasa (1 asiento)",
+      "Ajuste los pernos de conexión de la carcasa (2 asiento)",
+      "Ajuste los pernos de las manijas (1 asiento)",
+      "Ajuste los pernos de las manijas (2 asientos)",
+      "Limpie el Loctite",
+      "Monte el cojín del respaldo en la carcasa (1 asiento)",
+      "Monte el cojín del respaldo en la carcasa (2 asientos)",
+      "Marque los sujetadores de la carcasa (1 asiento)",
+      "Marque los sujetadores de la carcasa (2 asientos)",
+      "Ensamble los clips del cojín del asiento (1 asiento)",
+      "Ensamble los clips del cojín del asiento (2 asientos)"
+    ],
+    "projectData": [
+      "proj1kieltest",
+      "prj03",
+      "code",
+      3
+    ],
+    "stepTime": [
+      15,
+      15,
+      20,
+      20,
+      17,
+      22,
+      22,
+      20,
+      20,
+      10,
+      10
+    ]
+  },
+  "station_6": {
+    "english": [
+      "Mount the seat pad to the shelle (2 Seat)",
+      "Backrest and seat upholstery correction"
+    ],
+    "spanish": [
+      "Monte el cojín del respaldo en la carcasa (1 asiento)",
+      "Corrección del tapizado del respaldo y del asiento"
+    ],
+    "projectData": [
+      "proj1kieltest",
+      "prj03",
+      "code",
+      3
+    ],
+    "stepTime": [
+      14,
+      20
+    ]
+  },
+  "station_7": {
+    "english": [
+      "Final Control",
+      "Plastic Packaging"
+    ],
+    "spanish": [
+      "Control final",
+      "Empaque de plástico"
+    ],
+    "projectData": [
+      "proj1kieltest",
+      "prj03",
+      "code",
+      3
+    ],
+    "stepTime": [
+      60,
+      46
+    ]
+  }
+}

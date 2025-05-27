@@ -1,0 +1,175 @@
+@font-face {
+  font-family: 'CodecPro';
+  src: url('./fonts/codec-pro/CodecPro-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Apply CodecPro to all elements */
+* {
+  font-family: 'CodecPro', sans-serif;
+}
+
+/* Ensure inherited elements like buttons and inputs also use CodecPro */
+button, input, textarea {
+  font-family: 'CodecPro', sans-serif;
+}
+
+.hover-effect:hover {
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  transition: all 0.3s ease-in-out;
+}
+
+.h-5 {
+  height: 5%;
+}
+
+.h-10 {
+  height: 10%;
+}
+
+.h-15 {
+  height: 15%;
+}
+
+.h-17 {
+  height: 17%;
+}
+
+.h-20 {
+  height: 20%;
+}
+
+.h-27 {
+  height: 27%;
+}
+
+.h-30 {
+  height: 30%;
+}
+
+.h-32 {
+  height: 33%;
+}
+
+.h-35 {
+  height: 35%;
+}
+
+.h-15 {
+  height: 15%;
+}
+.h-40 {
+  height: 40%;
+}
+
+.h-45 {
+  height: 45%;
+}
+
+.h-50 {
+  height: 50%;
+}
+
+.h-60 {
+  height: 60%;
+}
+
+.h-70 {
+  height: 70%;
+}
+
+.h-80 {
+  height: 80%;
+}
+
+.h-85 {
+  height: 85%;
+}
+
+.custom-bullets li {
+  position: relative;
+  padding-left: 30px; /* Space for custom bullet */
+}
+
+.custom-bullets li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px; /* Size of the bullet */
+  height: 12px; /* Size of the bullet */
+  border-radius: 50%; /* Circle shape */
+  background-color: #31356e; /* Custom bullet color */
+}
+
+.donut {
+  transform: rotate(-90deg);
+}
+
+.donut circle {
+  fill: none;
+  stroke-width: 40;
+}
+
+.donut circle.bg {
+  stroke: #31356e; /* Color for the remaining portion */
+}
+
+.donut circle.fg {
+  stroke: #6ce5e8; /* Color for the filled portion */
+  stroke-dasharray: 440; /* Total circumference */
+  stroke-dashoffset: 220; /* Adjust to animate */
+  transition: stroke-dashoffset 1s;
+}
+
+
+.operation-item {
+  display: flex;
+  align-items: center;
+}
+
+.bullet {
+  width: 10px; /* size of the circle */
+  height: 10px; /* size of the circle */
+  border-radius: 50%;
+  margin-right: 10px; /* space between the bullet and text */
+}
+
+.remaining .bullet {
+  background-color: #6ce5e8; /* Color for Operations Remaining */
+}
+
+.completed .bullet {
+  background-color: #31356e; /* Color for Operations Completed */
+}
+
+.light {
+  width: 80px;
+  height: 60px;
+  border-radius: 8px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.faded {
+  opacity: 0.3;
+  box-shadow: none !important;
+}
+
+.active.bg-success {
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.8) !important;
+  opacity: 1;
+}
+
+.active.bg-warning {
+  box-shadow: 0 0 30px rgba(255, 255, 0, 0.8) !important;
+  opacity: 1;
+}
+
+.active.bg-danger {
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.8) !important;
+  opacity: 1;
+}
+
