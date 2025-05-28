@@ -5,21 +5,26 @@ const SavePageOne = require('./SavePageOne');
 const SavePageTwo = require('./SavePageTwo');
 
 const outputFolder = path.join(__dirname, '../../outputs');
-const outputFile   = path.join(outputFolder, 'outputs.xlsx');   // <‑‑ single workbook
+const outputFile   = path.join(outputFolder, 'outputs.xlsx'); // single workbook
+
+// Ensure valid Excel sheet name (max 31 chars)
+function buildSheetName(base, suffix = '') {
+  const full = suffix ? `${base}_${suffix}` : base;
+  return full.length > 31 ? full.slice(0, 31) : full;
+}
 
 async function insertfunction() {
   const [result1, result2] = await Promise.all([SavePageOne(), SavePageTwo()]);
 
-  /* ───── build the data arrays exactly as before ───── */
-  const now         = new Date();
-  const today       = now.toISOString().split('T')[0];                    // 2025‑05‑28
-  const currentTime = now.toISOString().split('T')[1]                     // 17:04:22.123Z
-                         .split('.')[0]                                   // 17:04:22
-                         .replace(/:/g, '-');                              // 17‑04‑22
+  const now = new Date();
+  const today = now.toISOString().split('T')[0]; // e.g. 2025-05-28
+  const currentTime = now.toISOString().split('T')[1]
+    .split('.')[0] // 17:04:22
+    .replace(/:/g, '-'); // 17-04-22
 
-  const sheetBase   = `output_${today}_${currentTime}`;                   // worksheet name
+  const sheetBase = `out_${today}_${currentTime}`; // shorter base name
 
-  /* --------------- SHEET 1 (result1) --------------- */
+  /* -------- SHEET 1 (result1) -------- */
   const sheet1Rows = [];
   result1.forEach(item => {
     Object.values(item).forEach(station => {
@@ -49,9 +54,9 @@ async function insertfunction() {
     ...sheet1Rows
   ]);
 
-  /* --------------- SHEET 2 (result2) --------------- */
-  const productKeys  = Object.keys(result2);
-  const allProducts  = new Set(productKeys.flatMap(k => result2[k].map(e => e.product)));
+  /* -------- SHEET 2 (result2) -------- */
+  const productKeys = Object.keys(result2);
+  const allProducts = new Set(productKeys.flatMap(k => result2[k].map(e => e.product)));
 
   const headers = ['Product'];
   productKeys.forEach(k => headers.push(`Station ${k} Start`,`Station ${k} Finish`,`Duration`));
@@ -68,17 +73,18 @@ async function insertfunction() {
 
   const ws2 = XLSX.utils.aoa_to_sheet([headers, ...sheet2Rows]);
 
-  /* ───── open or create the workbook, then append the new sheets ───── */
-  const wb = fs.existsSync(outputFile) ? XLSX.readFile(outputFile) : XLSX.utils.book_new();
+  /* -------- Workbook setup -------- */
+  const wb = fs.existsSync(outputFile)
+    ? XLSX.readFile(outputFile)
+    : XLSX.utils.book_new();
 
-  // ▸ If you only want ONE sheet per run, comment‑out the second append line.
-  XLSX.utils.book_append_sheet(wb, ws1,  `${sheetBase}_page1`);   // 31‑char limit is fine
-  XLSX.utils.book_append_sheet(wb, ws2,  `${sheetBase}_page2`);
+  XLSX.utils.book_append_sheet(wb, ws1, buildSheetName(sheetBase, 'pg1'));
+  XLSX.utils.book_append_sheet(wb, ws2, buildSheetName(sheetBase, 'pg2'));
 
-  XLSX.writeFile(wb, outputFile);          // ← overwrites the same file, keeps older sheets
+  XLSX.writeFile(wb, outputFile);
 }
 
-/* express handler stays the same */
+/* -------- Express handler -------- */
 const InsertOutputTable = async (req, res) => {
   try {
     await insertfunction();
