@@ -1,48 +1,29 @@
-const fs = require('fs');
+const fs = require('fs/promises');
 const path = require('path');
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
+const { promisify } = require('util');
 
-const UsePrinter = (barcode) => {
-    return new Promise((resolve, reject) => {
-        try {
+const execFileAsync = promisify(execFile);
 
-            const zplFolderPath = path.resolve('C:/Users/Mehmet/Desktop/kiel/server/python-scripts');
-            if (!fs.existsSync(zplFolderPath)) {
-                fs.mkdirSync(zplFolderPath, { recursive: true });
-            }
+const UsePrinter = async (barcode) => {
+    try {
+        const scriptsDir = path.resolve(__dirname, '../python-scripts');
+        await fs.mkdir(scriptsDir, { recursive: true });
 
+        const zplPath = path.join(scriptsDir, 'barcode.zpl');
+        await fs.writeFile(zplPath, barcode);
 
-            const zplFilePath = path.join(zplFolderPath, 'barcode.zpl');
+        const pythonExe = 'C:/Users/Mehmet/AppData/Local/Programs/Python/Python313/python.exe';
+        //const pythonExe = 'python3'; 
+        const scriptPath = path.join(scriptsDir, 'print_barcode.py');
 
-            // Write the barcode data into the file
-            fs.writeFileSync(zplFilePath, barcode);
+        await execFileAsync(pythonExe, [scriptPath, zplPath], { windowsHide: true });
 
-            // Define the Python executable and script paths C:\Users\Mehmet\Desktop\kiel\server\python-scripts\barcode.zpl
-            //C:\Users\Mehmet\AppData\Local\Programs\Python\Python313
-            const pythonPath = 'C:/Users/Mehmet/AppData/Local/Programs/Python/Python313/python.exe';
-            const pythonScriptPath = path.resolve('C:/Users/Mehmet/Desktop/kiel/server/python-scripts/print_barcode.py');
-
-            // Execute the Python script to print the barcode
-            const command = `"${pythonPath}" "${pythonScriptPath}" "${zplFilePath}"`;
-
-            exec(command, (error, stdout, stderr) => {
-                if (error) {
-                    console.error(`Error executing Python script: ${error.message}`);
-                    return reject("Error printing barcode");
-                }
-                if (stderr) {
-                    console.error(`stderr: ${stderr}`);
-                    return reject("Error printing barcode");
-                }
-                console.log(`stdout: ${stdout}`);
-                resolve("Data printed successfully");
-            });
-
-        } catch (error) {
-            console.error(error);
-            reject("Something went wrong");
-        }
-    });
+        return 'Data printed successfully';
+    } catch (err) {
+        console.error('Barcode print error:', err);
+        throw new Error('Error printing barcode');
+    }
 };
 
 module.exports = { UsePrinter };
