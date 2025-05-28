@@ -1,137 +1,92 @@
+const fs   = require('fs');
 const XLSX = require('xlsx');
 const path = require('path');
 const SavePageOne = require('./SavePageOne');
 const SavePageTwo = require('./SavePageTwo');
 
-// Define the output folder path
 const outputFolder = path.join(__dirname, '../../outputs');
+const outputFile   = path.join(outputFolder, 'outputs.xlsx');   // <‑‑ single workbook
 
 async function insertfunction() {
-    const result1 = await SavePageOne();
+  const [result1, result2] = await Promise.all([SavePageOne(), SavePageTwo()]);
 
-    const result2 = await SavePageTwo();
+  /* ───── build the data arrays exactly as before ───── */
+  const now         = new Date();
+  const today       = now.toISOString().split('T')[0];                    // 2025‑05‑28
+  const currentTime = now.toISOString().split('T')[1]                     // 17:04:22.123Z
+                         .split('.')[0]                                   // 17:04:22
+                         .replace(/:/g, '-');                              // 17‑04‑22
 
-    // Get today's date and time in the format YYYY-MM-DD_HH-MM-SS
-    const now = new Date();
-    const today = now.toISOString().split('T')[0]; // Format as "YYYY-MM-DD"
-    const currentTime = now.toISOString().split('T')[1].split('.')[0].replace(/:/g, '-'); // Format as "HH-MM-SS"
+  const sheetBase   = `output_${today}_${currentTime}`;                   // worksheet name
 
-    // Prepare the data to insert into Excel for Sheet1
-    const data = [];
-
-    result1.forEach((item) => {
-        Object.keys(item).forEach((key) => {
-            const station = item[key];
-            const row = [
-                today, // Column A (Today's Date)
-                station['Start Time'], // Column B
-                station['Project Code'], // Column C
-                station['Project Name'], // Column D
-                station['Production Code'], // Column E
-                station['Operator Name'], // Column F
-                station['Station'], // Column G
-                station['Operations'].join(', '), // Column H (if it's an array)
-                station['Total Operations'], // Column I
-                station['Remaining'], // Column J
-                station['Completed'], // Column K
-                station['Total operation time'], // Column L
-                station['Total Duration'], // Column M
-                station['Total Break Time'] // Column N
-            ];
-            data.push(row);
-        });
+  /* --------------- SHEET 1 (result1) --------------- */
+  const sheet1Rows = [];
+  result1.forEach(item => {
+    Object.values(item).forEach(station => {
+      sheet1Rows.push([
+        today,
+        station['Start Time'],
+        station['Project Code'],
+        station['Project Name'],
+        station['Production Code'],
+        station['Operator Name'],
+        station['Station'],
+        station['Operations'].join(', '),
+        station['Total Operations'],
+        station['Remaining'],
+        station['Completed'],
+        station['Total operation time'],
+        station['Total Duration'],
+        station['Total Break Time']
+      ]);
     });
+  });
 
-    // Create a new workbook
-    const wb = XLSX.utils.book_new();
+  const ws1 = XLSX.utils.aoa_to_sheet([
+    ['Date','Start Time','Project Code','Project Name','Production Code','Operator Name',
+     'Station Number','Operations','Total Operations','Remaining','Completed',
+     'Total Operation Time','Total Duration','Total Break Time'],
+    ...sheet1Rows
+  ]);
 
-    // Add a new sheet with the data for Sheet1
-    const ws1 = XLSX.utils.aoa_to_sheet([[
-        'Date', 'Start Time', 'Project Code', 'Project Name', 'Production Code', 'Operator Name',
-        'Station Number', 'Operations', 'Total Operations', 'Remaining', 'Completed', 'Total Operation Time', 'Total Duration', 'Total Break Time'
-    ], ...data]); // Add headers and data rows
-    XLSX.utils.book_append_sheet(wb, ws1, 'Sheet1');
+  /* --------------- SHEET 2 (result2) --------------- */
+  const productKeys  = Object.keys(result2);
+  const allProducts  = new Set(productKeys.flatMap(k => result2[k].map(e => e.product)));
 
-    // Prepare data for Sheet2
-    /*     const result2 = {
-            '1': [
-                { product: 'product1', start: 0, end: 7, duration: 0 },
-                { product: 'product2', start: 9, end: 13, duration: 2 },
-                { product: 'product3', start: 21, end: 30, duration: 8 }
-            ],
-            '2': [
-                { product: 'product1', start: 0, end: 70, duration: 0 },
-                { product: 'product2', start: 396, end: 591, duration: 326 },
-                { product: 'product3', start: 1914, end: 1967, duration: 1323 },
-                { product: 'product4', start: 2580, end: 2762, duration: 613 }
-            ],
-            '3': [
-                { product: 'product1', start: 0, end: 162, duration: 0 },
-                { product: 'product2', start: 260, end: 332, duration: 98 }
-            ]
-        }; */
+  const headers = ['Product'];
+  productKeys.forEach(k => headers.push(`Station ${k} Start`,`Station ${k} Finish`,`Duration`));
 
-    // Format data for Sheet2
-    const sheet2Data = [];
-
-    // Iterate over each product and format it into a row
-    const allProducts = new Set();
-    Object.keys(result2).forEach((productKey) => {
-        result2[productKey].forEach((entry) => {
-            allProducts.add(entry.product);
-        });
+  const sheet2Rows = [];
+  allProducts.forEach(product => {
+    const row = [product];
+    productKeys.forEach(station => {
+      const found = result2[station].find(e => e.product === product) || {};
+      row.push(found.start || 0, found.end || 0, found.duration || 0);
     });
+    sheet2Rows.push(row);
+  });
 
-    const productKeys = Object.keys(result2);
+  const ws2 = XLSX.utils.aoa_to_sheet([headers, ...sheet2Rows]);
 
-    // Create dynamic headers based on product keys
-    const headers = ['Product']; // Start with the 'Product' column
-    productKeys.forEach((key) => {
-        headers.push(`Station ${key} Start`, `Station ${key} Finish`, `Duration`);
-    });
+  /* ───── open or create the workbook, then append the new sheets ───── */
+  const wb = fs.existsSync(outputFile) ? XLSX.readFile(outputFile) : XLSX.utils.book_new();
 
-    // Loop over each product to ensure the data is in the correct format
-    allProducts.forEach((product) => {
-        const row = [product]; // First column: Product Name
+  // ▸ If you only want ONE sheet per run, comment‑out the second append line.
+  XLSX.utils.book_append_sheet(wb, ws1,  `${sheetBase}_page1`);   // 31‑char limit is fine
+  XLSX.utils.book_append_sheet(wb, ws2,  `${sheetBase}_page2`);
 
-        // Iterate through dynamic stations
-        productKeys.forEach((station) => {
-            const productData = result2[station]?.find((item) => item.product === product) || {};
-
-            // Add station data for the current product
-            row.push(productData.start || 0);
-            row.push(productData.end || 0);
-            row.push(productData.duration || 0);
-        });
-
-        // Add the formatted row to sheet2Data
-        sheet2Data.push(row);
-    });
-
-    // Create a new sheet for Sheet2
-    const ws2 = XLSX.utils.aoa_to_sheet([
-        headers, // Dynamically generated headers
-        ...sheet2Data // Add data rows for Sheet2
-    ]);
-    XLSX.utils.book_append_sheet(wb, ws2, 'Sheet2');
-
-    // Write the workbook to an output file with dynamic name
-    const filename = `output_${today}_${currentTime}.xlsx`;
-    const filePath = path.join(outputFolder, filename);
-    XLSX.writeFile(wb, filePath);
+  XLSX.writeFile(wb, outputFile);          // ← overwrites the same file, keeps older sheets
 }
 
-
+/* express handler stays the same */
 const InsertOutputTable = async (req, res) => {
-    try {
-        await insertfunction(); // Await the insertion function to complete first
-        return res.status(200).json({ message: "Data is ready" });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Something went wrong" });
-    }
+  try {
+    await insertfunction();
+    return res.status(200).json({ message: "Data is ready" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
 };
-
-
 
 module.exports = { InsertOutputTable };

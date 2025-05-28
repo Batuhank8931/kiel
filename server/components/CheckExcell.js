@@ -2,7 +2,7 @@ const XLSX = require('xlsx');
 const path = require('path');
 const fs = require('fs');
 
-const filePath = path.join(__dirname, 'ProgramInput.xlsx');
+const filePath = path.join(__dirname, 'ProgramInput.xlsm');
 const jsonFilePath = path.join(__dirname, 'jsons/input.json');
 const readDataFilePath = path.join(__dirname, 'jsons/ReadData.json');
 const stationUserFilePath = path.join(__dirname, 'jsons/stationuser.json');

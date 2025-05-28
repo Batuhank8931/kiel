@@ -98,6 +98,20 @@ const StationPage = () => {
 
     let timer;
 
+    function getFormattedDate() {
+        const now = new Date();
+
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const year = now.getFullYear();
+
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+
+        return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+    }
+
     const GetUsers = async () => {
         const body = { station: id };
         try {
@@ -479,7 +493,8 @@ const StationPage = () => {
             }
             else if (scannedData.startsWith("product") && isready === "Start" && currentproduct !== "break01Pro" && freescan === true) {
 
-                const currentTime = new Date().toLocaleString();
+                //const currentTime = new Date().toLocaleString();
+                const currentTime = getFormattedDate();
                 const match = scannedData.match(/product(\d+)no/);
 
                 let numberBetween = null;
@@ -501,22 +516,24 @@ const StationPage = () => {
 
             } else if (scannedData.startsWith("break01Pro") && isready === "Start" && currentproduct !== "break01Pro" && freescan === true && breaktime === false && CountTime === "00:00:00" && WaitState === true) {
 
-                const currentTime = new Date().toLocaleString();
+                //const currentTime = new Date().toLocaleString();
+                const currentTime = getFormattedDate();
                 PostStart("start", currentTime, "BREAK", id);
 
 
             } else if (scannedData.startsWith("break01Pro") && isready === "Start" && currentproduct === "break01Pro" && freescan === true && breaktime === true && WaitState === true) {
 
-                const currentTime = new Date().toLocaleString();
+                //const currentTime = new Date().toLocaleString();
+                const currentTime = getFormattedDate();
                 PostStart("end", currentTime, "BREAK", id);
 
             } else if (scannedData.startsWith("break01Pro") && currentproduct !== "break01Pro" && freescan === true && breaktime === false) {
                 setErrorShow("No Break");
                 setErrorshowcolor("#ff3131");
-            } else if (scannedData == 9789758607884) {
+            } else if (scannedData == "resetpage01") {
                 //} else if (scannedData == "resetpage01"){
                 window.location.reload();
-            } else if (scannedData == 9789758607754) {
+            } else if (scannedData == "fullpage01") {
                 //} else if (scannedData == "fullpage01"){
                 handleFullscreen();
             }
@@ -629,17 +646,14 @@ const StationPage = () => {
                             >
                                 {errorshow}
                             </div>
-
-
                         </div>
                         <div className="h-20 d-flex align-items-center justify-content-center border">
                             <div className="d-flex fs-3 align-items-center justify-content-center" style={{ flex: 1 }}>
-                                SEAT CODE: {OperationData[2]}
+                                SEAT CODE: {OperationData[0]}
                             </div>
                         </div>
                         <div className="h-60 d-flex align-items-center justify-content-center border">
                             <img src={product_photo} alt="product_photo" className="img-fluid" style={{ height: '10rem' }} />
-                            <div>ID: {id}</div>
                         </div>
                     </div>
                     <div className="h-50 d-flex align-items-center justify-content-center border">
@@ -690,8 +704,7 @@ const StationPage = () => {
                     </div>
                 </div>
                 <div className="col-3 d-flex row align-items-center justify-content-center m-0">
-                    <div className="h-15 d-flex align-items-center justify-content-center border fs-2">{OperationData[0]}</div>
-                    <div className="h-15 d-flex align-items-center justify-content-center border fs-2">{OperationData[1]}</div>
+                    <div className="h-30 d-flex align-items-center justify-content-center border fs-4">{OperationData[2]}</div>
                     <div className="h-40 d-flex align-items-center justify-content-center border">
                         <img src={user_photo} alt="user_photo" className="img-fluid" style={{ height: '12rem' }} />
                     </div>
