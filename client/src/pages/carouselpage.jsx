@@ -211,7 +211,7 @@ const CarouselPage = () => {
                     </div>
                     <div className="p-0 m-0 h-50 border">
                         <div className="d-flex h-100 fs-2 align-items-center justify-content-center " >
-                            {OperationData[1]}
+                            {OperationData[2]}
                         </div>
                     </div>
 
