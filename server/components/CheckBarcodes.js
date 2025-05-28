@@ -17,10 +17,10 @@ const readExcelFile = () => {
     }
 };
 
-const generateBarcodes = (productCode, amount, productName) => {
+const generateBarcodes = (amount, productName) => {
     let barcodes = [];
     for (let i = 1; i <= amount; i++) {
-        barcodes.push(`product${i}no${productCode}`);
+        barcodes.push(`product${i}no${productName}`);
         //barcodes.push(`end${i}no${productCode}`);
     }
     return barcodes;
@@ -37,7 +37,7 @@ const updateJsonFile = () => {
     }
 
     const [productName, productCode, productID, amount] = projectData;
-    const barcodes = generateBarcodes(productCode, amount, productID);
+    const barcodes = generateBarcodes( amount, productName);
 
     const data = { barcodes };
     
