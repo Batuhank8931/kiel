@@ -11,4 +11,11 @@ chmod 666 /home/user/Desktop/script/open_url.log
 
 sleep 20 && export DISPLAY=:0 && cd /home/user/Desktop/script && python3 open_url.py
 
+sudo nano /etc/dhcpcd.conf
+interface eth0
+static ip_address=192.168.0.10/24
+static routers=192.168.0.1
+static domain_name_servers=8.8.8.8
+
+
 sudo reboot

@@ -3,3 +3,15 @@ http://192.168.1.94:5173/mainpage
 http://192.168.1.94:5173/CarouselPage
 
 http://192.168.1.94:5173/StationPage/1
+
+
+Windows'ta Denetim Masası > Ağ ve İnternet > Ağ ve Paylaşım Merkezi > Bağdaştırıcı ayarlarını değiştir kısmına git
+
+Ethernet bağlantısına sağ tık > Özellikler > “İnternet Protokolü Sürüm 4 (TCP/IPv4)” seç > Özellikler
+
+Aşağıdaki gibi IP ve subnet mask ayarlarını yap:
+
+Ayar	Değer
+IP adresi	192.168.0.1
+Alt ağ maskesi	255.255.255.0
+Varsayılan ağ geçidi	Boş bırakabilir veya aynı (zorunlu değil)
