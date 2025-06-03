@@ -17,5 +17,6 @@ static ip_address=192.168.0.10/24
 static routers=192.168.0.1
 static domain_name_servers=8.8.8.8
 
+ps -e | grep -E 'dhcpcd|NetworkManager|systemd-networkd'
 
 sudo reboot
