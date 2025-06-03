@@ -18,8 +18,11 @@ static routers=192.168.0.1
 static domain_name_servers=8.8.8.8
 
 ps -e | grep -E 'dhcpcd|NetworkManager|systemd-networkd'
+
+
 nmcli connection show
 
+****BURADAN SONRAKİNLERİ TEK TEK YAPIŞTIRIP ENTER A BASACAKSIN****
 nmcli radio wifi off
 
 nmcli con mod "Wired connection 1" ipv4.addresses 192.168.0.10/24
@@ -27,6 +30,14 @@ nmcli con mod "Wired connection 1" ipv4.gateway 192.168.0.1
 nmcli con mod "Wired connection 1" ipv4.dns 8.8.8.8
 nmcli con mod "Wired connection 1" ipv4.method manual
 nmcli con up "Wired connection 1"
+
+*****
+NOT: nmcli con mod "Wired connection 1" ipv4.addresses 192.168.0.10/24 SATIRI HER BİR BİLGİSAYARDA 
+nmcli con mod "Wired connection 1" ipv4.addresses 192.168.0.11/24
+nmcli con mod "Wired connection 1" ipv4.addresses 192.168.0.12/24
+nmcli con mod "Wired connection 1" ipv4.addresses 192.168.0.13/24
+
+DİYE ARTARAK GİDECEK İLK BİLGİSAYAR 192.168.0.10/24 DU İKİNCİSİ 192.168.0.11/24 OLACAK..
 
 ip a show eth0
 
