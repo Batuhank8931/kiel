@@ -20,4 +20,16 @@ static domain_name_servers=8.8.8.8
 ps -e | grep -E 'dhcpcd|NetworkManager|systemd-networkd'
 nmcli connection show
 
+nmcli radio wifi off
+
+nmcli con mod "Wired connection 1" ipv4.addresses 192.168.0.10/24
+nmcli con mod "Wired connection 1" ipv4.gateway 192.168.0.1
+nmcli con mod "Wired connection 1" ipv4.dns 8.8.8.8
+nmcli con mod "Wired connection 1" ipv4.method manual
+nmcli con up "Wired connection 1"
+
+ip a show eth0
+
+
+
 sudo reboot
