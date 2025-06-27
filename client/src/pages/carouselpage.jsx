@@ -167,7 +167,7 @@ const CarouselPage = () => {
                 <div className="col-4 d-flex row align-items-center justify-content-center m-0 ">
                     <div className="h-100 d-flex row  p-0 border">
                         <div className="d-flex text-white fs-3 align-items-center justify-content-center h-15" style={{ backgroundColor: '#004081' }}>
-                            Targeted Seat QTY
+                            Targeted Seat Status
                         </div>
                         <div className="h-85">
                             <div className="h-40">
@@ -177,7 +177,7 @@ const CarouselPage = () => {
                             </div>
                             <div className="h-60 d-flex row align-items-center justify-content-center  p-0">
                                 <div className="d-flex text-white fs-3 align-items-center justify-content-center h-30" style={{ backgroundColor: '#004081' }}>
-                                    Completed SEAT QTY
+                                    Completed SEAT Status
                                 </div>
                                 <div className="h-70">
                                     <div className="d-flex h-100 fs-1 align-items-center justify-content-center" style={{ flex: 1 }}>
@@ -193,7 +193,7 @@ const CarouselPage = () => {
                 <div className="col-4 d-flex row align-items-center justify-content-center m-0 ">
                     <div className="h-100 d-flex row border p-0 ">
                         <div className="d-flex text-white fs-3 align-items-center justify-content-center h-15" style={{ backgroundColor: '#004081' }}>
-                            QTY
+                            Status
                         </div>
                         <div className="p-2 overflow-hidden d-flex justify-content-center align-items-center pb-5" style={{ maxHeight: '40vh' }}>
                             <PieChart />
@@ -205,8 +205,13 @@ const CarouselPage = () => {
             <div className="d-flex h-30">
                 <div className="col-4 d-flex row align-items-center justify-content-center m-0 ">
                     <div className="p-0 m-0 h-50 border">
-                        <div className="d-flex h-100 fs-2 align-items-center justify-content-center ">
-                            {OperationData[0]}
+                        <div className="d-flex h-100 fs-2 align-items-center justify-content-center gap-5">
+                            <div>
+                                {OperationData[0]}
+                            </div>
+                            <div>
+                                {OperationData[4]}
+                            </div>
                         </div>
                     </div>
                     <div className="p-0 m-0 h-50 border">
@@ -221,93 +226,109 @@ const CarouselPage = () => {
                 </div>
             </div>
             <div className="d-flex h-20">
+                {/* Number of Employees */}
                 <div className="col-6 d-flex row align-items-center justify-content-center m-0 border">
-                    <div className="d-flex text-white fs-5 align-items-center justify-content-center h-20 " style={{ backgroundColor: '#004081' }}>
+                    <div
+                        className="d-flex text-white fs-5 align-items-center justify-content-center h-20"
+                        style={{ backgroundColor: "#004081" }}
+                    >
                         Number of Employees
                     </div>
                     <div className="h-80 d-flex row align-items-center justify-content-center">
                         {/* First Row */}
                         <div className="p-1 d-flex justify-content-between">
-                            {firstHalfEmployees.map(employee => (
-                                <div key={employee.employee_id} className="">
-                                    <div>
-                                        <img
-                                            src={employee.active ? greenman : grayman}
-                                            alt={employee.active ? "greenman" : "grayman"}
-                                            className="img-fluid px-1"
-                                            style={{ height: '2.5rem' }}
-                                        />
-                                    </div>
+                            {firstHalfEmployees.map((employee) => (
+                                <div key={employee.employee_id}>
+                                    <img
+                                        src={employee.active ? greenman : grayman}
+                                        alt={employee.active ? "greenman" : "grayman"}
+                                        className="img-fluid px-1"
+                                        style={{ height: "2.5rem" }}
+                                    />
+                                    <div>{employee.name}</div>
+                                    <div>{employee.surname}</div>
                                 </div>
                             ))}
                         </div>
 
                         {/* Second Row */}
                         <div className="p-1 d-flex justify-content-between">
-                            {secondHalfEmployees.map(employee => (
-                                <div key={employee.employee_id} className="">
-                                    <div>
-                                        <img
-                                            src={employee.active ? greenman : grayman}
-                                            alt={employee.active ? "greenman" : "grayman"}
-                                            className="img-fluid px-1"
-                                            style={{ height: '2.5rem' }}
-                                        />
-                                    </div>
+                            {secondHalfEmployees.map((employee) => (
+                                <div key={employee.employee_id}>
+                                    <img
+                                        src={employee.active ? greenman : grayman}
+                                        alt={employee.active ? "greenman" : "grayman"}
+                                        className="img-fluid px-1"
+                                        style={{ height: "2.5rem" }}
+                                    />
+                                    <div>{employee.name}</div>
+                                    <div>{employee.surname}</div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
+
+                {/* Stations Status */}
                 <div className="col-6 d-flex row align-items-center justify-content-center m-0 border">
-                    <div className="d-flex text-white fs-5 align-items-center justify-content-center h-20" style={{ backgroundColor: '#004081' }}>
+                    <div
+                        className="d-flex text-white fs-5 align-items-center justify-content-center h-20"
+                        style={{ backgroundColor: "#004081" }}
+                    >
                         Stations Status
                     </div>
                     <div className="h-80 d-flex row align-items-center justify-content-center">
                         {/* First Row */}
                         <div className="p-1 d-flex justify-content-between">
-                            {firstHalfStations.map(station => (
-                                <div
-                                    key={station.station_id}
-                                    className="text-center"
-                                    style={{
-                                        width: '2.5rem',
-                                        height: '2.5rem',
-                                        backgroundColor: station.active ? '#7ed957' : '#e1e7e9',
-                                        borderRadius: '50%',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    {station.station_id}
+                            {firstHalfStations.map((station) => (
+                                <div key={station.station_id}>
+                                    <div
+                                        className="text-center"
+                                        style={{
+                                            width: "2.5rem",
+                                            height: "2.5rem",
+                                            backgroundColor: station.active ? "#7ed957" : "#e1e7e9",
+                                            borderRadius: "50%",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        {station.station_id}
+                                    </div>
+                                    <div>{station.name}</div>
+                                    <div>{station.surname}</div>
                                 </div>
                             ))}
                         </div>
 
                         {/* Second Row */}
                         <div className="p-1 d-flex justify-content-between">
-                            {secondHalfStations.map(station => (
-                                <div
-                                    key={station.station_id}
-                                    className="text-center px-1"
-                                    style={{
-                                        width: '2.5rem',
-                                        height: '2.5rem',
-                                        backgroundColor: station.active ? '#7ed957' : '#e1e7e9',
-                                        borderRadius: '50%',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    {station.station_id}
+                            {secondHalfStations.map((station) => (
+                                <div key={station.station_id}>
+                                    <div
+                                        className="text-center px-1"
+                                        style={{
+                                            width: "2.5rem",
+                                            height: "2.5rem",
+                                            backgroundColor: station.active ? "#7ed957" : "#e1e7e9",
+                                            borderRadius: "50%",
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        {station.station_id}
+                                    </div>
+                                    <div>{station.name}</div>
+                                    <div>{station.surname}</div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     );
 };

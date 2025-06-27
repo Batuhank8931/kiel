@@ -15,6 +15,17 @@ async function headersF() {
 
 const API = {
 
+    GetStationImageById: async (id, file) => {
+        const formData = new FormData();
+        formData.append("image", file); 
+
+        return axios.post(`${baseUrl}getstationobject/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+
     GetStatusChart: async () => {
         return axios.get(`${baseUrl}statuschart`, {
             headers: await headersF(),
@@ -23,6 +34,12 @@ const API = {
 
     InsertOutputTable: async () => {
         return axios.get(`${baseUrl}insertoutputable`, {
+            headers: await headersF(),
+        });
+    },
+
+    ResetInputTable: async () => {
+        return axios.get(`${baseUrl}resetInputable`, {
             headers: await headersF(),
         });
     },
@@ -87,14 +104,6 @@ const API = {
             headers: await headersF(),
         });
     },
-
-    // GET a specific device by device_id
-    getRawdata: async (station_id) => {
-        return axios.get(`${baseUrl}getallrawdata/${station_id}`, {
-            headers: await headersF(),
-        });
-    },
-
 
     userInfo: async (body) => {
         return axios.post(`${baseUrl}userinfo/`, body, {

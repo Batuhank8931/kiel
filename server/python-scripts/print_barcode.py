@@ -39,17 +39,16 @@ print(f"Barcode received: {barcode}")
 print(f"Header set to: {header1} {header2}")
 
 zpl_code = f"""
-
 ^XA
 ^LH0,0
 ^LT-10
-^FO20,0^BQN,2,10^FDLA,{barcode}^FS
-^FO240,40^A0N,40,40^FD{header1}^FS
-^FO240,80^A0N,40,40^FD{header2}^FS
-^FO240,140^A0N,{font_size},{font_size}^FD{barcode}^FS
+^BY1,2,100
+^FO20,40^BCN,100,Y,N,N^FD{barcode}^FS
 ^XZ
-
 """
+
+
+
 
 z = Zebra('ZDesigner ZD220-203dpi ZPL')
 

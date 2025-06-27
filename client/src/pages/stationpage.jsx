@@ -2,58 +2,19 @@ import { useParams } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { motion } from "framer-motion";
-
+import API from "../utils/utilRequest";
 import StationName from "../components/StationName.jsx";
 import DateAndTime from "../components/dateandtime.jsx";
 import DonutChart from "../components/DonutChart.jsx";
+import StationMedia from '../components/StationMedia';
 
-import user_photo from "../assets/users/user.png";
 
-import img1 from "../assets/stationpictures/1.png";
-import img2 from "../assets/stationpictures/2.png";
-import img3 from "../assets/stationpictures/3.png";
-import img4 from "../assets/stationpictures/4.png";
-import img5 from "../assets/stationpictures/5.png";
-import img6 from "../assets/stationpictures/6.png";
-import img7 from "../assets/stationpictures/7.png";
-import img8 from "../assets/stationpictures/8.png";
-import img9 from "../assets/stationpictures/9.png";
-import img10 from "../assets/stationpictures/10.png";
-import img11 from "../assets/stationpictures/11.png";
-import img12 from "../assets/stationpictures/12.png";
-import img13 from "../assets/stationpictures/13.png";
-import img14 from "../assets/stationpictures/14.png";
-import img15 from "../assets/stationpictures/15.png";
-import img16 from "../assets/stationpictures/16.png";
-import img17 from "../assets/stationpictures/17.png";
-import img18 from "../assets/stationpictures/18.png";
-import img19 from "../assets/stationpictures/19.png";
-import img20 from "../assets/stationpictures/20.png";
-
-const images = {
-    "1": img1,
-    "2": img2,
-    "3": img3,
-    "4": img4,
-    "5": img5,
-    "6": img6,
-    "7": img7,
-    "8": img8,
-    "9": img9,
-    "10": img10,
-    "11": img11,
-    "12": img12,
-    "13": img13,
-    "14": img14,
-    "15": img15,
-    "16": img16,
-    "17": img17,
-    "18": img18,
-    "19": img19,
-    "20": img20,
-};
-
-import API from "../utils/utilRequest";
+function parseCustomDate(str) {
+    const [datePart, timePart] = str.split(' ');
+    const [day, month, year] = datePart.split('.');
+    const [hour, minute, second] = timePart.split(':');
+    return new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+}
 
 const StationPage = () => {
     const { id } = useParams();
@@ -70,16 +31,13 @@ const StationPage = () => {
     const [userbarcode, setUserbarcode] = useState("");
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
-    const [scanshow, setscanshow] = useState("SCAN");
+    const [numbershow, setNumbershow] = useState("#");
+    const [scanshow, setscanshow] = useState("...");
     const [errorshow, setErrorShow] = useState("..");
     const [scanshowcolor, setscanshowcolor] = useState("white");
     const [errorshowcolor, setErrorshowcolor] = useState("white");
-    const [freescan, setFreeScan] = useState(true)
-
-    // Fallback in case id is not found
-    const product_photo = images[id] || img1;
-
-
+    const [timerColor, setTimerColor] = useState("white");
+    const [freescan, setFreeScan] = useState(true);
     const [breaktime, setBrakeTime] = useState(false);
     const [currentproduct, setCurrentProduct] = useState("");
 
@@ -124,16 +82,18 @@ const StationPage = () => {
     };
 
     useEffect(() => {
-        if (!WaitState) {
+        if (!WaitState && !breaktime) {
             timer = setInterval(() => {
                 setSeconds((prev) => prev + 1);
             }, 1000);
-        } else {
+        } else if (WaitState) {
+            clearInterval(timer);
+        } else if (!WaitState && breaktime) {
             clearInterval(timer);
         }
 
         return () => clearInterval(timer);
-    }, [WaitState]); // Runs only when WaitState changes
+    }, [WaitState, breaktime]); // Runs only when WaitState changes
 
     useEffect(() => {
         const hours = Math.floor(seconds / 3600);
@@ -148,12 +108,12 @@ const StationPage = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setErrorshowcolor("white");
-            setErrorShow("..");
-        }, 10000);
+            setscanshowcolor("white");
+            setscanshow("")
+        }, 5000);
 
         return () => clearTimeout(timer); // Cleanup timeout on unmount or re-render
-    }, [errorshow]);
+    }, [scanshow]);
 
 
     useEffect(() => {
@@ -172,9 +132,9 @@ const StationPage = () => {
 
         if (isready) {
             setscanshow("SCAN");
-            setErrorShow("..");
             setscanshowcolor("white");
             setErrorshowcolor("white");
+            setTimerColor("white")
             setCountTime("00:00:00");
             setWaitState(true);
             setSeconds(0);
@@ -277,29 +237,62 @@ const StationPage = () => {
     const GetStatusChartAtStart = async () => {
         try {
             const response = await API.getRawdata(id);
-
             const newEnglish = response.data[0];
             const newSpanish = response.data[1];
             const newOperationData = response.data[2];
             const newStepTimes = response.data[3]?.reduce((sum, num) => sum + num, 0) || 0;
             const readData = response.data[4] || null;
             const breakData = response.data[5] || null;
+            const difference = breakData ? breakData.difference || 0 : 0;
 
-            const history = readData ? `#${readData.product} ${readData.data}` : "";
+
+            const history = readData ? `${readData.data}` : "";
+            const Numberhistory = readData ? `#${readData.product}` : "";
 
             if (breakData && readData) {
+
                 if ((breakData.time || 0) > (readData.time || 0)) {
-                    setscanshowcolor("#ffa500");
-                    if (breakData.data === "start") {
-                        setCurrentProduct("break01Pro");
+
+                    if (breakData.data === "start" && readData.data === "start") {
+                        setTimerColor("#00FF00");
+                        setCurrentProduct(breakData.breakproduct);
                         setBrakeTime(true);
                         setscanshow("Break Start");
-                    } else {
+                        setNumbershow(Numberhistory);
+                        const breakDate = parseCustomDate(breakData.time);
+                        const readDate = parseCustomDate(readData.time);
+                        const diffInSeconds = Math.floor((breakDate - readDate) / 1000);
+                        setSeconds(diffInSeconds);
+
+                    } else if (breakData.data === "start" && readData.data === "end") {
+                        setTimerColor("#FFA500");
+                        setCurrentProduct(breakData.breakproduct);
+                        setBrakeTime(true);
+                        setscanshow("Break Start");
+                        setNumbershow(Numberhistory);
+                    } else if (breakData.data === "end" && readData.data === "start") {
+                        setNumbershow(Numberhistory);
+                        setscanshow(history);
+                        setscanshowcolor("#00FF00");
+                        setTimerColor("#00FF00");
+                        setWaitState(false);
+                        setCurrentProduct(readData.barcode);
+                        const breakDate = parseCustomDate(breakData.time);
+                        const readDate = parseCustomDate(readData.time);
+                        const now = new Date();
+                        const diffInSeconds = Math.floor(((now - readDate) / 1000) - difference);
+
+                        setSeconds(diffInSeconds);
+                    } else if (breakData.data === "end" && readData.data === "end") {
+                        setTimerColor("#FFA500");
                         setscanshow("Break End");
+                        setNumbershow(Numberhistory);
+                        setBrakeTime(false);
+                        setscanshow(history);
+                        setWaitState(true);
                     }
                 } else {
                     if (readData.data === "start") {
-                        console.log(readData.time);
                         const timeString = readData.time;
                         const [datePart, timePart] = timeString.split(' ');
                         const [day, month, year] = datePart.split('.');
@@ -313,20 +306,25 @@ const StationPage = () => {
 
 
                         const diffInSeconds = Math.floor((now - readTimeformat) / 1000);
+                        setNumbershow(Numberhistory);
                         setscanshow(history);
-                        setscanshowcolor("#6ce5e8");
+                        setscanshowcolor("#00FF00");
+                        setTimerColor("#00FF00");
                         setWaitState(false);
                         setSeconds(diffInSeconds);
                         setCurrentProduct(readData.barcode);
                     } else if (readData.data === "end") {
+                        setNumbershow(Numberhistory);
                         setscanshow(history);
-                        setscanshowcolor("#31356e");
+                        setTimerColor("#FFA500");
+                        setscanshowcolor("#FFA500");
                     }
                 }
             } else if (breakData && !readData) {
-                setscanshowcolor("#ffa500");
+                setscanshowcolor("#00FF00");
+                setTimerColor("#00FF00");
                 if (breakData.data === "start") {
-                    setCurrentProduct("break01Pro");
+                    setCurrentProduct(readData.barcode);
                     setBrakeTime(true);
                     setscanshow("Break Start");
                 } else {
@@ -343,17 +341,23 @@ const StationPage = () => {
                     const readTimeformat = new Date(formattedTime);
 
                     const diffInSeconds = Math.floor((now - readTimeformat) / 1000);
+                    setNumbershow(Numberhistory);
                     setscanshow(history);
-                    setscanshowcolor("#6ce5e8");
+                    setscanshowcolor("#00FF00");
+                    setTimerColor("#00FF00");
                     setWaitState(false);
                     setSeconds(diffInSeconds);
                     setCurrentProduct(readData.barcode);
                 } else if (readData.data === "end") {
+
+                    setNumbershow(Numberhistory);
                     setscanshow(history);
-                    setscanshowcolor("#31356e");
+                    setscanshowcolor("#FFA500");
+                    setTimerColor("#FFA500");
                 }
             } else if (!readData && !breakData) {
-                setscanshow("");
+                setNumbershow("#");
+                setscanshow("..");
                 setscanshowcolor("white");
                 setWaitState(true);
                 setSeconds(0);
@@ -373,6 +377,7 @@ const StationPage = () => {
             const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
             setStepTimes(prev => prev !== formattedTime ? formattedTime : prev);
+
         } catch (error) {
             console.error("Error fetching warrant:", error);
         }
@@ -428,48 +433,51 @@ const StationPage = () => {
         }
     };
 
-    const PostStart = async (data, time, number, id) => {
-
+    const PostStart = async (data, time, number, id, breakproduct) => {
         try {
             const response = await API.GetReadData({
                 data: data,
                 time: time,
                 product: number,
                 station: id,
-                barcode: scannedData
+                barcode: scannedData,
+                breakproduct: breakproduct
             });
             if (number !== "BREAK") {
                 if (response.data.message == "Data successfully inserted") {
                     setWaitState((prev) => !prev);
                     if (data === "start") {
                         setCurrentProduct(scannedData);
-                        setscanshow("#" + number + " start");
-                        setscanshowcolor("#6ce5e8");
+                        setNumbershow("#" + number);
+                        setscanshow("Start");
+                        setscanshowcolor("#00FF00");
+                        setTimerColor("#00FF00");
                     } else if (data === "end") {
                         setSeconds(0);
                         setCountTime("00:00:00");
-                        setscanshow("#" + number + " end");
-                        setscanshowcolor("#31356e");
+                        setNumbershow("#" + number);
+                        setscanshow("End");
+                        setscanshowcolor("#FFA500");
+                        setTimerColor("#FFA500");
                     }
 
                 } else if (response.data.message == "Data already exists, no changes made") {
-                    setErrorShow("#" + number + " exists");
-                    setErrorshowcolor("#ff3131");
+                    setscanshow("Exists");
+                    setscanshowcolor("#ff3131");
                 }
                 setFreeScan(true);
 
             } else if (number === "BREAK") {
                 if (response.data.message == "Data successfully inserted") {
-
-                    setscanshowcolor("#ffa500");
                     if (data === "start") {
                         setscanshow("Break Start");
                         setBrakeTime((prev) => !prev);
-                        setCurrentProduct("break01Pro");
+                        //setCurrentProduct("break01Pro");
                     } else if (data === "end") {
                         setscanshow("Break end");
                         setBrakeTime((prev) => !prev);
-                        setCurrentProduct("");
+                        //setCurrentProduct("");
+                        setTimerColor("#FFA500");
                     }
                 }
                 setFreeScan(true);
@@ -485,7 +493,7 @@ const StationPage = () => {
     const handleKeyDown = (event) => {
         if (event.key === "Enter") {
             if (scannedData.startsWith("UN") && isready === "Ready") {
-                setscanshow(scannedData);
+                //setscanshow(scannedData);
                 PostUser(scannedData, id);
                 setUserbarcode(scannedData);
                 GetUsers();
@@ -505,38 +513,46 @@ const StationPage = () => {
 
                 if (numberBetween && WaitState === true) {
                     setFreeScan(false);
-                    PostStart("start", currentTime, numberBetween, id);
-                } else if (numberBetween && WaitState === false && currentproduct === scannedData && CountTime >= "00:00:05") {
+                    PostStart("start", currentTime, numberBetween, id, "");
+                } else if (numberBetween && WaitState === false && currentproduct === scannedData && CountTime >= "00:00:03") {
                     setFreeScan(false);
-                    PostStart("end", currentTime, numberBetween, id);
-                } else if (numberBetween && WaitState === true || currentproduct !== scannedData || CountTime < "00:00:05") {
-                    setErrorShow("No Valid");
-                    setErrorshowcolor("#ff3131");
+                    PostStart("end", currentTime, numberBetween, id, "");
+                } else if (numberBetween && WaitState === true || currentproduct !== scannedData || CountTime < "00:00:03") {
+                    setscanshow("No Valid");
+                    setscanshowcolor("#ff3131");
+                } 
+
+            } else if (scannedData.startsWith("break01Pro") && isready === "Start" && freescan === true && breaktime === false) {
+                //const currentTime = new Date().toLocaleString();
+                const currentTime = getFormattedDate();
+                if (WaitState) {
+                    PostStart("start", currentTime, "BREAK", id, "");
+                } else {
+                    PostStart("start", currentTime, "BREAK", id, currentproduct);
                 }
 
-            } else if (scannedData.startsWith("break01Pro") && isready === "Start" && currentproduct !== "break01Pro" && freescan === true && breaktime === false && CountTime === "00:00:00" && WaitState === true) {
+            } else if (scannedData.startsWith("break01Pro") && isready === "Start" && freescan === true && breaktime === true) {
 
                 //const currentTime = new Date().toLocaleString();
                 const currentTime = getFormattedDate();
-                PostStart("start", currentTime, "BREAK", id);
+                if (WaitState) {
 
+                    PostStart("end", currentTime, "BREAK", id, "");
+                } else {
+                    PostStart("end", currentTime, "BREAK", id, currentproduct);
+                }
 
-            } else if (scannedData.startsWith("break01Pro") && isready === "Start" && currentproduct === "break01Pro" && freescan === true && breaktime === true && WaitState === true) {
-
-                //const currentTime = new Date().toLocaleString();
-                const currentTime = getFormattedDate();
-                PostStart("end", currentTime, "BREAK", id);
-
-            } else if (scannedData.startsWith("break01Pro") && currentproduct !== "break01Pro" && freescan === true && breaktime === false) {
-                setErrorShow("No Break");
-                setErrorshowcolor("#ff3131");
             } else if (scannedData == "resetpage01") {
                 //} else if (scannedData == "resetpage01"){
                 window.location.reload();
             } else if (scannedData == "fullpage01") {
                 //} else if (scannedData == "fullpage01"){
                 handleFullscreen();
+            } else {
+                setscanshow("N/A");
+                setscanshowcolor("#ff3131");
             }
+
 
             setScannedData("");
         }
@@ -627,33 +643,15 @@ const StationPage = () => {
             <div className="d-flex flex-grow-1">
                 <div className="col-3 d-flex row align-items-center justify-content-center m-0">
                     <div className="h-50 d-flex row align-items-center justify-content-center border p-0">
-                        <div className="h-20 d-flex align-items-center justify-content-around border">
-                            <div
-                                className="d-flex fs-5 align-items-center justify-content-center text-white p-2 px-4"
-                                style={{
-                                    backgroundColor: scanshowcolor,
-                                    borderRadius: "10px",
-                                }}
-                            >
-                                {scanshow}
-                            </div>
-                            <div
-                                className="d-flex fs-5 align-items-center justify-content-center text-white p-2 px-4"
-                                style={{
-                                    backgroundColor: errorshowcolor,
-                                    borderRadius: "10px",
-                                }}
-                            >
-                                {errorshow}
-                            </div>
+                        <div className="d-flex text-white fs-6 align-items-center justify-content-center h-10" style={{ backgroundColor: '#004081' }}>
+                            Operation List
                         </div>
-                        <div className="h-20 d-flex align-items-center justify-content-center border">
-                            <div className="d-flex fs-3 align-items-center justify-content-center" style={{ flex: 1 }}>
-                                SEAT CODE: {OperationData[0]}
-                            </div>
-                        </div>
-                        <div className="h-60 d-flex align-items-center justify-content-center border">
-                            <img src={product_photo} alt="product_photo" className="img-fluid" style={{ height: '10rem' }} />
+                        <div className="h-85 d-flex column align-items-start justify-content-start">
+                            <ul className="custom-bullets list-unstyled">
+                                {OperationListEnglish.map((operation, index) => (
+                                    <li className="m-1" key={index}>{operation}</li>
+                                ))}
+                            </ul>
                         </div>
                     </div>
                     <div className="h-50 d-flex align-items-center justify-content-center border">
@@ -669,7 +667,7 @@ const StationPage = () => {
                                 <div className="d-flex align-items-center justify-content-center py-2">Target Time</div>
                                 <div className="h-full d-flex align-items-center justify-content-center fs-1">{StepTimes}</div>
                             </div>
-                            <div className="h-100 w-50 d-flex row align-items-center justify-content-center border">
+                            <div className="h-100 w-50 d-flex row align-items-center justify-content-center border p-1">
                                 <div className="d-flex align-items-center justify-content-center py-2">Current Time</div>
                                 <div className="h-full d-flex align-items-center justify-content-center fs-1">
                                     {CountTime}
@@ -678,38 +676,38 @@ const StationPage = () => {
                         </div>
                     </div>
                     <div className="h-70 d-flex align-items-center justify-content-center border p-0">
-                        <div className="h-100 w-100 d-flex row align-items-center justify-content-center border p-0">
-                            <div className="d-flex text-white fs-6 align-items-center justify-content-center h-10" style={{ backgroundColor: '#004081' }}>
-                                Operation List
-                            </div>
-                            <div className="h-85 p-2 d-flex column align-items-center justify-content-evenly">
-                                <div>
-                                    <div className="d-flex column align-items-center justify-content-center"> English </div>
-                                    <ul className="custom-bullets list-unstyled">
-                                        {OperationListEnglish.map((operation, index) => (
-                                            <li className="m-1" key={index}>{operation}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                                <div>
-                                    <div className="d-flex column align-items-center justify-content-center"> Spanish </div>
-                                    <ul className="custom-bullets list-unstyled">
-                                        {OperationListSpanish.map((operation, index) => (
-                                            <li className="m-1" key={index}>{operation}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                        <StationMedia id={id} />
                     </div>
+
                 </div>
                 <div className="col-3 d-flex row align-items-center justify-content-center m-0">
-                    <div className="h-30 d-flex align-items-center justify-content-center border fs-4">{OperationData[2]}</div>
-                    <div className="h-40 d-flex align-items-center justify-content-center border">
-                        <img src={user_photo} alt="user_photo" className="img-fluid" style={{ height: '12rem' }} />
+                    <div className="h-15 d-flex align-items-center justify-content-center border fs-3">{name} {surname}</div>
+                    <div className="h-15 d-flex align-items-center justify-content-center border fs-3">{OperationData[4]}</div>
+                    <div className="h-70 d-flex align-items-center justify-content-center border row">
+                        <div
+                            className="d-flex align-items-center justify-content-center text-black text-center font-bold h-50 w-100 p-0 m-0"
+                            style={{
+                                backgroundColor: timerColor,
+                                borderRadius: "10px",
+                                fontSize: "8rem", // You can increase this even more if needed
+                                fontWeight: "bold", // Optional: makes it more visible
+                            }}
+                        >
+                            {numbershow}
+                        </div>
+                        <div
+                            className="d-flex align-items-center justify-content-center text-black text-center font-bold h-50 w-100 p-0 m-0"
+                            style={{
+                                backgroundColor: scanshowcolor,
+                                borderRadius: "10px",
+                                fontSize: "8rem", // You can increase this even more if needed
+                                fontWeight: "bold", // Optional: makes it more visible
+                            }}
+                        >
+                            {scanshow}
+                        </div>
                     </div>
-                    <div className="h-15 d-flex align-items-center justify-content-center border fs-2">{name} {surname}</div>
-                    <div className="h-15 d-flex align-items-center justify-content-center border"><DateAndTime /></div>
+
                 </div>
             </div>
         </div>

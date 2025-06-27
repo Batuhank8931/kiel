@@ -31,19 +31,25 @@ const ProductBarcode = () => {
     };
 
     const handlePrint = () => {
-        const start = (barcodeNumber - 1);
+        if (barcodeNumber + 1 > allbarcodes.length) {
+            // If going beyond array bounds, just exit
+            return;
+        }
+
+        const start = barcodeNumber - 1;
 
         if (allbarcodes[start] === undefined) {
             alert("No more product to print.");
             return;
         }
 
-
-        let barcodearray = [allbarcodes[start]];
-        printBarcodeRequest(barcodearray)
+        const barcodearray = [allbarcodes[start]];
+        printBarcodeRequest(barcodearray);
 
         setBarcodeNumber(barcodeNumber + 1);
     };
+
+
 
     const handlePrintBreak = () => {
 
@@ -136,21 +142,21 @@ const ProductBarcode = () => {
                     className="btn border hover-effect"
                     style={{ borderRadius: "0" }}
                     onClick={() => handlePrintBreak()}
-                    ><img src={print} alt="print" className="img-fluid px-1" style={{ height: '1.5rem' }} />
+                ><img src={print} alt="print" className="img-fluid px-1" style={{ height: '1.5rem' }} />
                     PRINT BREAK QR
                 </button>
                 <button
                     className="btn border hover-effect"
                     style={{ borderRadius: "0" }}
                     onClick={() => handlePrintReset()}
-                    ><img src={print} alt="print" className="img-fluid px-1" style={{ height: '1.5rem' }} />
+                ><img src={print} alt="print" className="img-fluid px-1" style={{ height: '1.5rem' }} />
                     PRINT RESET QR
                 </button>
                 <button
                     className="btn border hover-effect"
                     style={{ borderRadius: "0" }}
                     onClick={() => handlePrintFullscreen()}
-                    ><img src={print} alt="print" className="img-fluid px-1" style={{ height: '1.5rem' }} />
+                ><img src={print} alt="print" className="img-fluid px-1" style={{ height: '1.5rem' }} />
                     PRINT FULL.S QR
                 </button>
             </div>

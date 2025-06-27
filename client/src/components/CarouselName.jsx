@@ -1,5 +1,5 @@
 import React from "react";
-import kiellogo from "../assets/kiel.png";
+import kiellogo from "../assets/Logo.png";
 import DateAndTime from "./dateandtime.jsx";
 
 const CarouselName = () => {
@@ -23,7 +23,7 @@ const CarouselName = () => {
                     <img src={kiellogo} alt="Kiel Logo" className="img-fluid" style={{ height: "4rem" }} />
                 </div>
                 <div className="d-flex fs-1 align-items-center justify-content-center" style={{ flex: 1 }}>
-                    CAROUSEL 1
+                    CAROUSEL 3
                 </div>
 
                 <div className="d-flex flex-row align-items-center justify-content-end" style={{ flex: 1 }}>

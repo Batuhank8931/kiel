@@ -40,7 +40,7 @@ const StationName = ({ id }) => {
                         </button>
                     </div>
                     <div className="p-2">
-
+                        <DateAndTime />
                     </div>
                 </div>
             </div>

@@ -7,6 +7,7 @@ import photo from "../assets/photo.png";
 import personal from "../assets/personal.png";
 import save from "../assets/save.png";
 import buyutec from "../assets/search.png";
+
 const PersonalIntroduction = () => {
     const [qrContent, setQrContent] = useState("-");
     const [showModal, setShowModal] = useState(false); // State to control modal

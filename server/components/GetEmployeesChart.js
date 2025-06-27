@@ -5,35 +5,56 @@ const stationsjson = path.join(__dirname, 'jsons/stationuser.json');
 
 const GetEmployeesChart = async (req, res) => {
     try {
-        // Read stationuser.json
         const stationsData = await fs.promises.readFile(stationsjson, 'utf8');
-        
+
         let stationsList = [];
 
-        // Check if the file is not empty and valid JSON
         if (stationsData) {
             try {
                 stationsList = JSON.parse(stationsData);
-                // Ensure stationsList is an array, if not set to empty array
                 if (!Array.isArray(stationsList)) stationsList = [];
             } catch (error) {
                 console.error('Error parsing stationuser.json:', error);
             }
         }
 
-        // Extract unique station numbers as employee IDs
-        const activeEmployeeIds = new Set(stationsList.map(station => station.station));
+        // Filter out duplicate seriNo entries (keep the first occurrence)
+        const uniqueBySeriNo = new Map();
+        for (const item of stationsList) {
+            if (!uniqueBySeriNo.has(item.seriNo)) {
+                uniqueBySeriNo.set(item.seriNo, item);
+            }
+        }
 
-        // Create employees array (assuming IDs from 1 to 20)
+        const uniqueStations = Array.from(uniqueBySeriNo.values());
+
+        // Create a map of station number to employee info
+        const stationToUser = new Map();
+        for (const user of uniqueStations) {
+            stationToUser.set(user.station, {
+                name: user.name || "",
+                surname: user.surname || ""
+            });
+        }
+
+        // Create employees array from 1 to 7
         const employees = Array.from({ length: 7 }, (_, i) => {
             const employee_id = i + 1;
+            const userInfo = stationToUser.get(employee_id.toString()) || { name: "", surname: "" };
+
             return {
                 employee_id,
-                active: activeEmployeeIds.has(employee_id.toString()) // Check if station ID exists
+                active: stationToUser.has(employee_id.toString()),
+                name: userInfo.name,
+                surname: userInfo.surname
             };
         });
 
-        // Return the generated employees array
+        // Sort active users first
+        employees.sort((a, b) => {
+            return (a.active === b.active) ? 0 : a.active ? -1 : 1;
+        });
+
         res.status(200).json(employees);
 
     } catch (error) {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import kiellogo from "../assets/kiel.png";
+import kiellogo from "../assets/Logo.png";
 import DateAndTime from "./dateandtime.jsx";
 
 const Menu = () => {
