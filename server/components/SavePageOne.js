@@ -19,6 +19,7 @@ async function SavePageOne() {
         const projectName = jsonData.station_1.projectData[0];
         const projectCode = jsonData.station_1.projectData[1];
         const productCode = jsonData.station_1.projectData[2];
+        const seatType = jsonData.station_1.projectData[4];
         const totalOperations = jsonData.station_1.projectData[3];
 
         // Read stationuser.json
@@ -74,7 +75,7 @@ async function SavePageOne() {
 
             // First and last start/end
             const firstStart = startTimes.length > 0 ? startTimes[0] : null;
-            const firstStartText = startTimesText.length > 0 ? startTimesText[0] : null;
+            const firstStartText = startTimesText.length > 0 ? startTimesText[0].split(' ')[1] : null;
             const lastEnd = endTimes.length > 0 ? endTimes[endTimes.length - 1] : null;
             const diffInSeconds = firstStart && lastEnd ? (lastEnd - firstStart) / 1000 : 0;
 
@@ -87,8 +88,8 @@ async function SavePageOne() {
             const stationDataObj = {
                 [`station ${user.station}`]: {
                     "Start Time": firstStartText,
-                    "Project Code": projectCode,
                     "Project Name": projectName,
+                    "Seat Type": seatType,
                     "Production Code": productCode,
                     "Operator Name": `${user.name} ${user.surname}`,
                     "Station": user.station,

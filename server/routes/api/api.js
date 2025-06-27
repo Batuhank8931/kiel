@@ -8,10 +8,11 @@ const GetStationsChart = require('../../components/GetStationsChart');
 const GetAllRawData = require('../../components/GetAllRawData');
 const GetProductBarcodes = require('../../components/GetProductBarcodes');
 const PrintBarcode = require('../../components/PrintBarcode');
-
+const WatchExcelFile = require('../../components/CheckExcell');
+const GetStationObject  = require("../../components/GetStationObject");
 
 const { InsertOutputTable } = require('../../components/InsertOutputTable');
-     
+
 // Import functions from user.js
 const { Userinfo, getUser, deleteUser, putUsers } = require('../../components/user');
 const { PostReady, informReady } = require('../../components/PostReady');
@@ -29,7 +30,10 @@ router.get('/getallrawdata/:station_id', GetAllRawData);
 router.post('/printbarcode', PrintBarcode);
 router.post('/postready', PostReady);
 router.get('/informready', informReady);
+router.post("/getstationobject/:id", GetStationObject); 
+
 router.post('/setusertostation', SetUsertoStation);
+
 
 router.post('/getreaddata', GetReadData);
 
@@ -37,6 +41,7 @@ router.get('/operationnumber', OperationNumber);
 
 router.get('/insertoutputable', InsertOutputTable);
 
+router.get('/resetInputable', WatchExcelFile);
 
 // User routes
 router.post('/userinfo', Userinfo);  // Get all or a specific user

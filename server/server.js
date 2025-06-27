@@ -21,7 +21,7 @@ app.use(cors(corsOptions));
 app.use('/api', apiRoutes); // All API routes will be prefixed with '/api'
 
 // Start watching the Excel file for changes
-watchExcelFile();
+//watchExcelFile();
 watchBarcodesFile();
 
 // Start the Server

@@ -7,7 +7,9 @@ const ProductModal = ({ show, handleClose, allbarcodes }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [filteredBarcodes, setFilteredBarcodes] = useState([]);
-
+    const buttonStyle = { width: "50px", height: "50px" };
+    const buttonAllStyle = { width: "150px", height: "40px" };
+    const iconStyle = { height: "1.5rem" };
     useEffect(() => {
         const formattedData = allbarcodes.map(barcode => ({
             productNo: barcode.split('.')[1],
@@ -17,47 +19,52 @@ const ProductModal = ({ show, handleClose, allbarcodes }) => {
     }, [allbarcodes]);
 
     const printBarcodeRequest = async (barcodearray) => {
-
         try {
-            const response = await API.printBarcode({
-                "barcodes": barcodearray
-            }
-            );
-
+            await API.printBarcode({
+                barcodes: barcodearray
+            });
         } catch (error) {
-            console.error("Error fetching warrant:", error);
+            console.error("Error printing barcode:", error);
         }
     };
 
     const handleSearchChange = (e) => {
         const term = e.target.value;
         setSearchTerm(term);
-        setFilteredBarcodes(
-            allbarcodes.filter(barcode => barcode.includes(term)).map(barcode => ({
+        const filtered = allbarcodes
+            .filter(barcode => barcode.includes(term))
+            .map(barcode => ({
                 productNo: barcode.split('.')[1],
                 barcode
-            }))
-        );
+            }));
+        setFilteredBarcodes(filtered);
     };
 
-    const handleCheckboxChange = (productNo) => {
-        setSelectedProducts(prev => prev.includes(productNo)
-            ? prev.filter(id => id !== productNo)
-            : [...prev, productNo]
+    const handleCheckboxChange = (barcode) => {
+        setSelectedProducts(prev =>
+            prev.includes(barcode)
+                ? prev.filter(b => b !== barcode)
+                : [...prev, barcode]
         );
     };
 
     const handleSelectAll = (e) => {
         if (e.target.checked) {
-            setSelectedProducts(filteredBarcodes.map(product => product.productNo));
+            const all = filteredBarcodes.map(product => product.barcode);
+            setSelectedProducts(all);
         } else {
             setSelectedProducts([]);
         }
     };
 
     const handlePrint = (barcode) => {
-        let barcodearray = [barcode];
-        printBarcodeRequest(barcodearray)
+        printBarcodeRequest([barcode]);
+    };
+
+    const handlePrintSelected = () => {
+        if (selectedProducts.length > 0) {
+            printBarcodeRequest(selectedProducts);
+        }
     };
 
     return (
@@ -67,18 +74,34 @@ const ProductModal = ({ show, handleClose, allbarcodes }) => {
             </Modal.Header>
             <Modal.Body>
                 <Form.Group className="mb-3 d-flex flex-row justify-content-between">
-                    <Form.Control
-                        type="text"
-                        placeholder="Search"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                    />
+                    <div>
+                        <Form.Control
+                            type="text"
+                            placeholder="Search"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                        />
+                    </div>
+                    <button className="btn btn-light d-flex flex-row align-items-center justify-content-center gap-3" style={buttonAllStyle} onClick={handlePrintSelected}>
+                        <div className='' style={{ fontSize: '0.75rem' }}>Print All</div>
+                        <img src={print} alt="print" className="img-fluid" style={iconStyle} />
+                    </button>
                 </Form.Group>
 
                 <div style={{ maxHeight: '250px', overflowY: 'auto' }}>
                     <Table striped bordered hover responsive>
                         <thead>
                             <tr>
+                                <th>
+                                    <Form.Check
+                                        type="checkbox"
+                                        onChange={handleSelectAll}
+                                        checked={
+                                            filteredBarcodes.length > 0 &&
+                                            filteredBarcodes.every(p => selectedProducts.includes(p.barcode))
+                                        }
+                                    />
+                                </th>
                                 <th>Barcode</th>
                                 <th>Print Barcode</th>
                             </tr>
@@ -87,6 +110,13 @@ const ProductModal = ({ show, handleClose, allbarcodes }) => {
                             {filteredBarcodes.length > 0 ? (
                                 filteredBarcodes.map((product, index) => (
                                     <tr key={`${product.productNo}-${index}`}>
+                                        <td>
+                                            <Form.Check
+                                                type="checkbox"
+                                                checked={selectedProducts.includes(product.barcode)}
+                                                onChange={() => handleCheckboxChange(product.barcode)}
+                                            />
+                                        </td>
                                         <td>{product.barcode}</td>
                                         <td className='d-flex flex-row justify-content-center gap-3'>
                                             <button className="btn btn-light" onClick={() => handlePrint(product.barcode)}>
@@ -98,7 +128,7 @@ const ProductModal = ({ show, handleClose, allbarcodes }) => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4" className="text-center">
+                                    <td colSpan="3" className="text-center">
                                         No Product Found
                                     </td>
                                 </tr>

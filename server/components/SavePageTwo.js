@@ -2,6 +2,7 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const readDataFilePath = path.join(__dirname, 'jsons/ReadData.json');
+const jsonFilePath = path.join(__dirname, 'jsons/input.json');
 
 const processStationData = (stationData) => {
     let previousEndTime = 0; // Track cumulative end time
@@ -11,7 +12,7 @@ const processStationData = (stationData) => {
 
         if (data === "start") {
             const startTime = previousEndTime + difference; // Start after previous end + difference
-            result.push({ product, start: startTime, end: 0, duration: index === 0 ? 0 : difference });
+            result.push({ product, product_code: item.product_code, start: startTime, end: 0, duration: index === 0 ? 0 : difference });
         } else if (data === "end") {
             // Find the last entry for this product and update its end time
             const lastEntry = result.find((entry) => entry.product === product && entry.end === 0);
@@ -28,6 +29,9 @@ const processStationData = (stationData) => {
 async function SavePageTwo() {
     try {
         const data = await fs.readFile(readDataFilePath, 'utf8');
+        const inputData = await fs.readFile(jsonFilePath, 'utf8');
+        const jsoninput = JSON.parse(inputData);
+        const productCode = jsoninput.station_1.projectData[2];
         const jsonData = JSON.parse(data);
 
         // Group data by station
@@ -68,6 +72,7 @@ async function SavePageTwo() {
 
             // Push the current item with the calculated difference
             acc[item.station].push({
+                product_code : productCode,
                 product: item.product,
                 data: item.data,
                 time: item.time,
