@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-//export const baseUrl = 'http://192.168.1.5:3005/api/';
+//export const baseUrl = 'http://192.168.1.2:3005/api/';
 //export const baseUrl = 'http://localhost:3005/api/';
 
 export const baseUrl = import.meta.env.VITE_BASE_URL;
