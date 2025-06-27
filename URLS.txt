@@ -15,3 +15,6 @@ Ayar	Değer
 IP adresi	192.168.0.1
 Alt ağ maskesi	255.255.255.0
 Varsayılan ağ geçidi	Boş bırakabilir veya aynı (zorunlu değil)
+
+python -m pip install pyinstaller
+python -m PyInstaller --onefile C:\Users\Batuhan\Desktop\kiel\kiel\run_npm.py
