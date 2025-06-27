@@ -477,7 +477,7 @@ const StationPage = () => {
                         setscanshow("Break end");
                         setBrakeTime((prev) => !prev);
                         //setCurrentProduct("");
-                        setTimerColor("#FFA500");
+                        //setTimerColor("#FFA500");
                     }
                 }
                 setFreeScan(true);
@@ -636,7 +636,7 @@ const StationPage = () => {
                 value={scannedData}
                 onChange={(e) => setScannedData(e.target.value)}
                 onKeyDown={handleKeyDown}
-                style={{ position: "absolute", opacity: 0, pointerEvents: "none" }}
+                style={{ position: "absolute", opacity: 1, pointerEvents: "none" }}
             />
 
             <StationName id={id} />
