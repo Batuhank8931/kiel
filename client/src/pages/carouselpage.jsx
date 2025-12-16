@@ -195,7 +195,7 @@ const CarouselPage = () => {
                         <div className="d-flex text-white fs-3 align-items-center justify-content-center h-15" style={{ backgroundColor: '#004081' }}>
                             Status
                         </div>
-                        <div className="p-2 overflow-hidden d-flex justify-content-center align-items-center pb-5" style={{ maxHeight: '40vh' }}>
+                        <div className="p-2 overflow-hidden d-flex justify-content-center align-items-center pb-5" style={{ maxHeight: '100vh' }}>
                             <PieChart />
                         </div>
                     </div>

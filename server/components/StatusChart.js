@@ -1,14 +1,23 @@
 const path = require('path');
 const fs = require('fs');
+const fsp = fs.promises;   
 
-const jsonFilePath = path.join(__dirname, 'jsons/input.json');
-const stationsjson = path.join(__dirname, 'jsons/stationuser.json');
-const readDataPath = path.join(__dirname, 'jsons/ReadData.json'); 
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+// Yazılabilir klasörleri EXE dışında oluştur
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const jsonFilePath = path.join(dataDir, 'input.json');
+const readDataPath = path.join(dataDir, 'ReadData.json');
+const stationsjson = path.join(dataDir, 'stationuser.json');
 
 const getStatusChart = async (req, res) => {
     try {
         // Read input.json
-        const inputData = await fs.promises.readFile(jsonFilePath, 'utf8');
+        const inputData = await fsp.readFile(jsonFilePath, 'utf8');
         let jsonData = {};
 
         if (inputData) {
@@ -22,7 +31,7 @@ const getStatusChart = async (req, res) => {
         const totalOperations = jsonData.station_1?.projectData?.[3] || 0; // Safe access with default value 0
 
         // Read stationuser.json
-        const stationsData = await fs.promises.readFile(stationsjson, 'utf8');
+        const stationsData = await fsp.readFile(stationsjson, 'utf8');
         let stationsList = [];
 
         if (stationsData) {
@@ -39,7 +48,7 @@ const getStatusChart = async (req, res) => {
         const uniqueStations = [...new Set(stationsList.map(station => station.station))];
 
         // Read and process ReadData.json
-        const readData = await fs.promises.readFile(readDataPath, 'utf8');
+        const readData = await fsp.readFile(readDataPath, 'utf8');
         let readJson = [];
 
         if (readData) {

@@ -1,0 +1,22 @@
+[
+  {
+    "data": "start",
+    "time": "11.12.2025 16:36:21",
+    "product": "1",
+    "station": "1",
+    "barcode": "product1noEsos",
+    "seriNo": "2",
+    "name": "mehmet",
+    "surname": "mehmet"
+  },
+  {
+    "data": "end",
+    "time": "11.12.2025 16:37:03",
+    "product": "1",
+    "station": "1",
+    "barcode": "product1noEsos",
+    "seriNo": "2",
+    "name": "mehmet",
+    "surname": "mehmet"
+  }
+]

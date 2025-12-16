@@ -1,75 +1,81 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Chart } from "react-google-charts";
+import React, { useEffect, useState } from "react";
+import { Pie } from "react-chartjs-2";
 import API from "../utils/utilRequest";
 
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+// REQUIRED for pie chart
+ChartJS.register(ArcElement, Tooltip, Legend);
+
 const PieChart = () => {
-    const svgRef = useRef();
-    const [totalOperations, settotalOperations] = useState("");
-    const [remainingOperations, setremainingOperations] = useState("");
-    const [remainingPercentage, setremainingPercentage] = useState(((remainingOperations / totalOperations) * 100));
-    const [completedPercentage, setcompletedPercentage] = useState(100 - ((remainingOperations / totalOperations) * 100));
+  const [totalOperations, setTotalOperations] = useState(0);
+  const [remainingOperations, setRemainingOperations] = useState(0);
 
+  const remainingPercentage =
+    totalOperations > 0 ? (remainingOperations / totalOperations) * 100 : 0;
 
-    useEffect(() => {
-        checkchart();
-        const interval = setInterval(checkchart, 3000);
+  const completedPercentage =
+    totalOperations > 0 ? 100 - remainingPercentage : 0;
 
-        return () => clearInterval(interval); // Cleanup on unmount
-    }, []); // Runs when id changes
+  const checkchart = async () => {
+    try {
+      const response = await API.OperationNumber();
 
-    const checkchart = async () => {
-        try {
-            const response = await API.OperationNumber();
+      const total = response.data.totalOperations;
+      const remain = response.data.remainingOperations;
 
-            const total = (response.data.totalOperations);
-            const remain = (response.data.remainingOperations);
+      setTotalOperations(total);
+      setRemainingOperations(remain);
+    } catch (error) {
+      console.error("Error fetching warrant:", error);
+    }
+  };
 
-            settotalOperations(total);
-            setremainingOperations(remain);
-            setremainingPercentage(((remain / total) * 100));
-            setcompletedPercentage(100 - ((remain / total) * 100));
-        } catch (error) {
-            console.error("Error fetching warrant:", error);
-        }
-    };
+  useEffect(() => {
+    checkchart();
+    const interval = setInterval(checkchart, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
-    const data = [
-        ["Task", "Percentage"],
-        ["Remaining", remainingPercentage],
-        ["Completed", completedPercentage],
-    ];
+  const data = {
+    labels: ["Remaining", "Completed"],
+    datasets: [
+      {
+        data: [remainingPercentage, completedPercentage],
+        backgroundColor: ["#6ce5e8", "#31356e"],
+        hoverBackgroundColor: ["#6ce5e8", "#31356e"],
+      },
+    ],
+  };
 
-    const options = {
-        pieSliceText: "percentage",
-        slices: {
-            0: { offset: 0, color: "#6ce5e8" },
-            1: { color: "#31356e" },
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          color: "#233238",
+          font: {
+            size: 15,
+          },
         },
-        legend: {
-            alignment: "left",
-            position: "bottom",
-            textStyle: {
-                color: "#233238",
-                fontSize: 15,
-            },
-        },
-        backgroundColor: 'transparent',
-        width: "100%",
-        height: "300px"
-    };
+      },
+    },
+  };
 
-    useEffect(() => {
-    }, []);
-
-    return (
-        <div className='d-flex row align-items-center justify-content-center '>
-            <Chart
-                chartType="PieChart"
-                data={data}
-                options={options}
-            />
-        </div>
-    );
+  return (
+    <div className="d-flex row align-items-center justify-content-center">
+      <div style={{ width: "100%", height: "100%" }}>
+        <Pie data={data} options={options} />
+      </div>
+    </div>
+  );
 };
 
 export default PieChart;

@@ -1,9 +1,18 @@
 const fs = require("fs");
 const path = require("path");
 
-const filePath = path.join(__dirname, "jsons/ReadData.json");
-const filePathBreak = path.join(__dirname, "jsons/BreakData.json");
-const filePathUsers = path.join(__dirname, "jsons/stationuser.json");
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+// Yazılabilir klasörleri EXE dışında oluştur
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const filePath = path.join(dataDir, 'ReadData.json');
+const filePathBreak = path.join(dataDir, 'BreakData.json');
+const filePathUsers = path.join(dataDir, 'stationuser.json');
+
 
 const GetReadData = async (req, res) => {
     try {

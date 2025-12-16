@@ -2,8 +2,13 @@ const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
 
-// Destination path (adjust as needed)
-const uploadDir = path.join(__dirname, "../../client/public/assets/stationpictures");
+// EXE’nin çalıştığı dizine göre upload klasörü
+const uploadDir = path.join(process.cwd(), 'stationpictures');
+
+// Klasör yoksa oluştur
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 // Ensure directory exists
 if (!fs.existsSync(uploadDir)) {

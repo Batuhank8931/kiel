@@ -2,8 +2,14 @@ const XLSX = require('xlsx');
 const path = require('path');
 const fs = require('fs');
 
-const filePath = path.join(__dirname, 'ProgramInput.xlsm');
-const jsonFilePath = path.join(__dirname, 'jsons/barcodes.json');
+// EXE’nin çalıştığı dizine göre path
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+const filePath = path.join(path.dirname(process.execPath), 'data', 'ProgramInput.xlsm');
+
+
+const jsonFilePath = path.join(dataDir, 'barcodes.json');
+
+
 
 const readExcelFile = () => {
     try {

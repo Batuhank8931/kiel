@@ -130,7 +130,7 @@ const StationPage = () => {
         GetStatusChart();
         const interval = setInterval(GetStatusChart, 2000);
 
-        if (isready) {
+        if (isready && isready !== "Start") {
             setscanshow("SCAN");
             setscanshowcolor("white");
             setErrorshowcolor("white");
@@ -172,9 +172,6 @@ const StationPage = () => {
         return () => clearInterval(interval);
     }, [id]);
 
-
-
-
     useEffect(() => {
         // Focus on the hidden input when the component mounts
         if (inputRef.current) {
@@ -182,17 +179,6 @@ const StationPage = () => {
         }
 
     }, [isready, breaktime]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (inputRef.current) {
-                inputRef.current.focus();
-            }
-        }, 3000);
-
-        return () => clearInterval(interval);
-    }, [isready, breaktime]);
-
 
     useEffect(() => {
         // Focus on the hidden input when the component mounts
@@ -237,6 +223,7 @@ const StationPage = () => {
     const GetStatusChartAtStart = async () => {
         try {
             const response = await API.getRawdata(id);
+            console.log(response.data);
             const newEnglish = response.data[0];
             const newSpanish = response.data[1];
             const newOperationData = response.data[2];
@@ -514,13 +501,13 @@ const StationPage = () => {
                 if (numberBetween && WaitState === true) {
                     setFreeScan(false);
                     PostStart("start", currentTime, numberBetween, id, "");
-                } else if (numberBetween && WaitState === false && currentproduct === scannedData && CountTime >= "00:00:03") {
+                } else if (numberBetween && WaitState === false && currentproduct === scannedData && CountTime >= "00:00:30") {
                     setFreeScan(false);
                     PostStart("end", currentTime, numberBetween, id, "");
-                } else if (numberBetween && WaitState === true || currentproduct !== scannedData || CountTime < "00:00:03") {
+                } else if (numberBetween && WaitState === true || currentproduct !== scannedData || CountTime < "00:00:30") {
                     setscanshow("No Valid");
                     setscanshowcolor("#ff3131");
-                } 
+                }
 
             } else if (scannedData.startsWith("break01Pro") && isready === "Start" && freescan === true && breaktime === false) {
                 //const currentTime = new Date().toLocaleString();
@@ -560,7 +547,8 @@ const StationPage = () => {
 
 
     useEffect(() => {
-        if (isready === "Ready") {
+        console.log("ananananananaanananana")
+        if (isready === "Ready" || isready === "Start") {
             inputRef.current?.focus();
             setUserbarcode("");
         }
@@ -577,18 +565,11 @@ const StationPage = () => {
                     (isready === "Start" && name === "" && surname == "") ||
                     breaktime === true
                 }
-                backdrop="static" centered size={isready === "Ready" ? "lg" : "lg"}>
+                backdrop="static" centered size={isready === "Ready" ? "lg" : "lg"}
+                enforceFocus={false}>
                 <Modal.Body className="text-center p-5 position-relative">
                     {isready === "Ready" ? (
                         <>
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                value={scannedData}
-                                onChange={(e) => setScannedData(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                style={{ position: "absolute", opacity: 0, pointerEvents: "none", zIndex: 9999 }}
-                            />
                             <h1 className="fw-bold">SCAN THE USER QR</h1>
                             <h1 className="fw-bold">USER: {userbarcode}</h1>
                         </>
@@ -599,26 +580,10 @@ const StationPage = () => {
                         </>
                     ) : (isready === "Start" && name === "" && surname == "") ? (
                         <>
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                value={scannedData}
-                                onChange={(e) => setScannedData(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                style={{ position: "absolute", opacity: 0, pointerEvents: "none", zIndex: 9999 }}
-                            />
                             <h1 className="fw-bold">NO USER</h1>
                         </>
                     ) : breaktime === true ? (
                         <>
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                value={scannedData}
-                                onChange={(e) => setScannedData(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                style={{ position: "absolute", opacity: 0, pointerEvents: "none", zIndex: 9999 }}
-                            />
                             <h1 className="fw-bold">SCAN THE BREAK QR</h1>
                         </>
                     ) :
@@ -636,7 +601,12 @@ const StationPage = () => {
                 value={scannedData}
                 onChange={(e) => setScannedData(e.target.value)}
                 onKeyDown={handleKeyDown}
-                style={{ position: "absolute", opacity: 1, pointerEvents: "none" }}
+                style={{
+                    position: "absolute",
+                    left: "200px", // Add this line to move right
+                    opacity: 0.5,
+                    pointerEvents: "none"
+                }}
             />
 
             <StationName id={id} />

@@ -1,8 +1,18 @@
-const fs = require('fs').promises;
+const fs = require('fs');          // normal fs, sync + async
+const fsp = fs.promises;           // async metodlar için
 const path = require('path');
 
-const readDataFilePath = path.join(__dirname, 'jsons/ReadData.json');
-const jsonFilePath = path.join(__dirname, 'jsons/input.json');
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+// Senkron klasör kontrol ve oluşturma (pkg/EXE uyumlu)
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// Dosya path’leri
+const jsonFilePath = path.join(dataDir, 'input.json');
+const readDataFilePath = path.join(dataDir, 'ReadData.json');
 
 const processStationData = (stationData) => {
     let previousEndTime = 0; // Track cumulative end time
@@ -28,8 +38,8 @@ const processStationData = (stationData) => {
 
 async function SavePageTwo() {
     try {
-        const data = await fs.readFile(readDataFilePath, 'utf8');
-        const inputData = await fs.readFile(jsonFilePath, 'utf8');
+        const data = await fs.promises.readFile(readDataFilePath, 'utf8');
+        const inputData = await fs.promises.readFile(jsonFilePath, 'utf8');
         const jsoninput = JSON.parse(inputData);
         const productCode = jsoninput.station_1.projectData[2];
         const jsonData = JSON.parse(data);

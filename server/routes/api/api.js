@@ -20,6 +20,7 @@ const { SetUsertoStation } = require('../../components/PostArrangeUser');
 const { GetReadData } = require('../../components/GetReadData');
 
 const OperationNumber = require('../../components/OperationNumber');
+const { GetStationPicture } = require('../../components/GetStationPicture');
 
 // Use the getStatusChart function for the '/data' route
 router.get('/statuschart', getStatusChart);
@@ -53,6 +54,8 @@ router.put('/users', putUsers);  // Add or update a user
 router.get('/anotherRoute', (req, res) => {
     res.send('Hello from the API!');
 });
+
+router.get('/getstationpicture/:id', GetStationPicture)
 
 // Export the router
 module.exports = router;

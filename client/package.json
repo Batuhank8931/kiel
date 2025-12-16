@@ -6,19 +6,24 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start-server": "node main.js",
+    "build-exe": "pkg main.js --targets node18-win-x64 --output client.exe"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
     "axios": "^1.7.9",
+    "bonjour": "^3.5.0",
     "bootstrap": "^5.3.3",
+    "chart.js": "^4.5.1",
     "d3": "^7.9.0",
     "dotenv": "^16.5.0",
+    "express": "^4.22.1",
     "framer-motion": "^12.4.7",
     "qrcode.react": "^4.2.0",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.9",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "^18.3.1",
     "react-google-charts": "^5.2.1",
     "react-qr-code": "^2.0.15",

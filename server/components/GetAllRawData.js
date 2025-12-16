@@ -2,9 +2,17 @@ const XLSX = require('xlsx');
 const path = require('path');
 const fs = require('fs');
 
-const jsonFilePath = path.join(__dirname, 'jsons/input.json');
-const readdataPath = path.join(__dirname, 'jsons/ReadData.json');
-const breakdataPath = path.join(__dirname, 'jsons/BreakData.json');
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+// Yazılabilir klasörleri EXE dışında oluştur
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const jsonFilePath = path.join(dataDir, 'input.json');
+const readdataPath = path.join(dataDir, 'ReadData.json');
+const breakdataPath = path.join(dataDir, 'BreakData.json');
 
 
 let dataArray = {};

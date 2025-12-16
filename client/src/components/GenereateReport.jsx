@@ -92,8 +92,8 @@ const GenerateReport = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     zIndex: 9999,
-                  }}
-                >
+                  }} 
+                >ssdsdsds
                     <div style={{backgroundColor: 'white', padding: '20px', borderRadius: '8px', width: '320px', textAlign: 'center'}}>
                         <p>All data will upload to excel and memory will erase.</p>
                         <div style={{display: 'flex', justifyContent: 'space-around', marginTop: '20px'}}>

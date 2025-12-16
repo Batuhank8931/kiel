@@ -1,14 +1,15 @@
-const fs = require('fs').promises;
+const fs = require('fs');
+const fsp = fs.promises; // promises fs
 const path = require('path');
 
-
-const readBreakFilePath = path.join(__dirname, 'jsons/BreakData.json');
+// EXE’nin çalıştığı dizine göre path
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+const readBreakFilePath = path.join(dataDir, 'BreakData.json');
 
 // Function to calculate total break time per station
 async function calculateTotalBreakTime() {
-
     // Read BreakData.json
-    const readBreakData = await fs.readFile(readBreakFilePath, 'utf8');
+    const readBreakData = await fs.promises.readFile(readBreakFilePath, 'utf8');
     const data = JSON.parse(readBreakData);
 
     const stationData = {};
@@ -16,13 +17,9 @@ async function calculateTotalBreakTime() {
     // Loop through the data to group by station
     data.forEach(item => {
         const station = item.station;
-
-        // Initialize station data if not already
         if (!stationData[station]) {
             stationData[station] = [];
         }
-
-        // Push break events to the station
         stationData[station].push(item);
     });
 
@@ -37,24 +34,20 @@ async function calculateTotalBreakTime() {
             const breakData = breaks[i];
 
             if (breakData.data === 'start') {
-
                 const breakDataTime = breakData.time; // e.g., "14.03.2025 00:10:59"
-                // Convert DD.MM.YYYY HH:mm:ss format to YYYY-MM-DDTHH:mm:ss
                 const [date, time] = breakDataTime.split(' ');
                 const [day, month, year] = date.split('.');
                 const formattedDate = `${year}-${month}-${day}T${time}`;
                 const startTime = new Date(formattedDate);
-                const endBreak = breaks[i + 1]; // Next event should be 'end'
 
+                const endBreak = breaks[i + 1];
                 if (endBreak && endBreak.data === 'end') {
-                    const endBreakTime = endBreak.time; // e.g., "14.03.2025 00:11:45"
-                    // Convert DD.MM.YYYY HH:mm:ss format to YYYY-MM-DDTHH:mm:ss
-                    const [date, time] = endBreakTime.split(' ');
-                    const [day, month, year] = date.split('.');
-                    const formattedDate = `${year}-${month}-${day}T${time}`;
-                    const endTime = new Date(formattedDate);
-                    const breakTime = (endTime - startTime) / 1000; // Calculate difference in seconds
-                    totalBreakTime += breakTime;
+                    const [endDate, endTime] = endBreak.time.split(' ');
+                    const [endDay, endMonth, endYear] = endDate.split('.');
+                    const formattedEndDate = `${endYear}-${endMonth}-${endDay}T${endTime}`;
+                    const endTimeObj = new Date(formattedEndDate);
+
+                    totalBreakTime += (endTimeObj - startTime) / 1000; // seconds
                 }
             }
         }
@@ -64,6 +57,5 @@ async function calculateTotalBreakTime() {
 
     return stationBreakTimes;
 }
-
 
 module.exports = calculateTotalBreakTime;

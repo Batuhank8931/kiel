@@ -1,11 +1,15 @@
 const path = require('path');
 const fs = require('fs');
+const fsp = fs.promises;   
 
-const stationsjson = path.join(__dirname, 'jsons/stationuser.json');
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+const stationsjson = path.join(dataDir, 'stationuser.json');
 
 const GetStationsChart = async (req, res) => {
     try {
-        const stationsData = await fs.promises.readFile(stationsjson, 'utf8');
+        const stationsData = await fsp.readFile(stationsjson, 'utf8');
         let stationsList = [];
 
         if (stationsData) {
