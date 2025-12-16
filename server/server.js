@@ -2,29 +2,45 @@ const express = require('express');
 const app = express();
 const apiRoutes = require('./routes/api/api'); // Import the routes
 const cors = require('cors');
-const { watchExcelFile } = require('./components/CheckExcell'); // Import the function from CheckExcell.js
-const { watchBarcodesFile } = require('./components/CheckBarcodes'); // Import the function from CheckExcell.js
+const { watchBarcodesFile } = require('./components/CheckBarcodes');
+const WatchExcelFile = require('./components/CheckExcell');
+const os = require('os');
 
-const PORT = 3005; // Change the port if needed
+const PORT = 3008;
 
-// Middleware to parse JSON
+// Middleware
 app.use(express.json());
-
 const corsOptions = {
-  origin: "*", // Allow requests from any IP
+  origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 };
 app.use(cors(corsOptions));
 
-// Use the API routes
-app.use('/api', apiRoutes); // All API routes will be prefixed with '/api'
+// Routes
+app.use('/api', apiRoutes);
 
-// Start watching the Excel file for changes
-//watchExcelFile();
+// Start watching files
 watchBarcodesFile();
+WatchExcelFile();
 
-// Start the Server
+// Function to get local IPv4 addresses
+function getLocalIPv4() {
+  const nets = os.networkInterfaces();
+  const results = [];
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        results.push(net.address);
+      }
+    }
+  }
+  return results;
+}
+
+// Start the server
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running`);
+  const ips = getLocalIPv4();
+  console.log(`Server is running on port ${PORT}`);
+  ips.forEach(ip => console.log(`Accessible at http://${ip}:${PORT}`));
 });

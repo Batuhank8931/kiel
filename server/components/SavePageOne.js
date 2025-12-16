@@ -1,9 +1,20 @@
-const fs = require('fs').promises;
+const fs = require('fs');           // normal fs, sync + async
+const fsp = fs.promises;            // sadece async için
+
 const path = require('path');
 
-const jsonFilePath = path.join(__dirname, 'jsons/input.json');
-const stationUserFilePath = path.join(__dirname, 'jsons/stationuser.json');
-const readDataFilePath = path.join(__dirname, 'jsons/ReadData.json');
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+// Senkron klasör oluşturma (pkg uyumlu)
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+// JSON dosyaları
+const jsonFilePath = path.join(dataDir, 'input.json');
+const readDataFilePath = path.join(dataDir, 'ReadData.json');
+const stationUserFilePath = path.join(dataDir, 'stationuser.json');
 const calculateTotalBreakTime = require('./CalculateBrake');
 
 
@@ -14,7 +25,7 @@ async function SavePageOne() {
 
 
         // Read input.json
-        const inputData = await fs.readFile(jsonFilePath, 'utf8');
+        const inputData = await fs.promises.readFile(jsonFilePath, 'utf8');
         const jsonData = JSON.parse(inputData);
         const projectName = jsonData.station_1.projectData[0];
         const projectCode = jsonData.station_1.projectData[1];
@@ -23,11 +34,11 @@ async function SavePageOne() {
         const totalOperations = jsonData.station_1.projectData[3];
 
         // Read stationuser.json
-        const userData = await fs.readFile(stationUserFilePath, 'utf8');
+        const userData = await fs.promises.readFile(stationUserFilePath, 'utf8');
         const stationUsers = JSON.parse(userData);
 
         // Read ReadData.json
-        const readData = await fs.readFile(readDataFilePath, 'utf8');
+        const readData = await fs.promises.readFile(readDataFilePath, 'utf8');
         const readDataJson = JSON.parse(readData);
 
         // Find the highest station number

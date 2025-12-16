@@ -1,90 +1,76 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Chart } from "react-google-charts";
+import React, { useEffect, useState } from "react";
+import { Doughnut } from "react-chartjs-2";
 import API from "../utils/utilRequest";
 
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend
+} from "chart.js";
+
+// REQUIRED ⬇️
+ChartJS.register(ArcElement, Tooltip, Legend);
+
 const DonutChart = () => {
-    const svgRef = useRef();
-    const [totalOperations, settotalOperations] = useState("");
-    const [remainingOperations, setremainingOperations] = useState("");
-    const [remainingPercentage, setremainingPercentage] = useState(((remainingOperations / totalOperations) * 100));
-    const [completedPercentage, setcompletedPercentage] = useState(100 - ((remainingOperations / totalOperations) * 100));
+  const [total, setTotal] = useState(0);
+  const [remain, setRemain] = useState(0);
 
-    useEffect(() => {
-        checkchart();
-        const interval = setInterval(checkchart, 3000);
+  const completed = total - remain;
 
-        return () => clearInterval(interval); // Cleanup on unmount
-    }, []); // Runs when id changes
+  useEffect(() => {
+    loadData();
+    const interval = setInterval(loadData, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
-    const checkchart = async () => {
-        try {
-            const response = await API.OperationNumber();
+  const loadData = async () => {
+    try {
+      const response = await API.OperationNumber();
+      setTotal(response.data.totalOperations);
+      setRemain(response.data.remainingOperations);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-            const total = (response.data.totalOperations);
-            const remain = (response.data.remainingOperations);
-            
-            
-            settotalOperations(total);
-            setremainingOperations(remain);
-            setremainingPercentage( ((remain / total) * 100));
-            setcompletedPercentage( 100 - ((remain / total) * 100));
-        } catch (error) {
-            console.error("Error fetching warrant:", error);
-        }
-    };
+  const data = {
+    labels: ["Remaining", "Completed"],
+    datasets: [
+      {
+        data: [remain, completed],
+        backgroundColor: ["#6ce5e8", "#31356e"],
+      },
+    ],
+  };
 
-    const data = [
-        ["Task", "Percentage"],
-        ["Remaining", remainingPercentage],
-        ["Completed", completedPercentage], 
-    ];
+  const options = {
+    cutout: "40%",
+    plugins: {
+      legend: {
+        position: "bottom",
+      },
+    },
+  };
 
-    const options = {
-        pieSliceText: "percentage",
-        slices: {
-            0: { offset: 0, color: "#6ce5e8" }, 
-            1: { color: "#31356e" }, 
-        },
-        legend: {
-          alignment: "left",
-          position: "bottom",
-          textStyle: {
-            color: "#233238",
-            fontSize: 15,
-          },
-        },
-        pieHole: 0.4,
-        is3D: false,
-        backgroundColor: 'transparent',
-        height:"350px"
-    };
+  return (
+    <div style={{ position: "relative", width: "300px" }}>
+      <Doughnut data={data} options={options} />
 
-    useEffect(() => {}, []);
-
-    return (
-        <div className="d-flex row align-items-center justify-content-center mb-5" style={{ position: "relative" }}>
-            <Chart
-                chartType="PieChart"
-                data={data}
-                options={options}
-            />
-            <div
-                style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    textAlign: "center",
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    color: "#31356e",
-                }}
-            >
-                <div style={{ fontSize: "12px", fontWeight: "normal" }}>Total</div>
-                <div style={{ fontSize: "12px", fontWeight: "normal" }}>{totalOperations}</div>
-            </div>
-        </div>
-    );
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+        }}
+      >
+        <div>Total</div>
+        <div>{total}</div>
+      </div>
+    </div>
+  );
 };
 
 export default DonutChart;

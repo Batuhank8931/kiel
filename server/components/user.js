@@ -1,7 +1,17 @@
 const fs = require('fs');
 const path = require('path');
-const usersFile = path.join(__dirname, 'jsons/users.json');
-const stationfile = path.join(__dirname, 'jsons/stationuser.json');
+const fsp = fs.promises;   
+
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+// Yazılabilir klasörleri EXE dışında oluştur
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const usersFile = path.join(dataDir, 'users.json');
+const stationfile = path.join(dataDir, 'stationuser.json');
 
 const readUsers = () => {
   try {
@@ -30,7 +40,7 @@ const Userinfo = async (req, res) => {
   if (station) {
     try {
       // Read the JSON file asynchronously
-      const data = await fs.promises.readFile(stationfile, 'utf-8');
+      const data = await fsp.readFile(stationfile, 'utf-8');
       const users = JSON.parse(data);
 
       // Find the user based on the 'station' value

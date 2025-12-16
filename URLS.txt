@@ -18,3 +18,8 @@ Varsayılan ağ geçidi	Boş bırakabilir veya aynı (zorunlu değil)
 
 python -m pip install pyinstaller
 python -m PyInstaller --onefile C:\Users\Batuhan\Desktop\kiel\kiel\run_npm.py
+
+
+
+pkg . --targets node18-win-x64 --output my-server.exe
+pkg main.js --targets node18-win-x64 --output client.exe

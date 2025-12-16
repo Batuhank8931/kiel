@@ -5,13 +5,25 @@ const path = require('path');
 const SavePageOne = require('./SavePageOne');
 const SavePageTwo = require('./SavePageTwo');
 
-const outputFolder = path.join(__dirname, '../../outputs');
-const outputFile = path.join(outputFolder, 'outputs.xlsx'); // single workbook
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
 
-const readDataFilePath = path.join(__dirname, 'jsons/ReadData.json');
-const stationUserFilePath = path.join(__dirname, 'jsons/stationuser.json');
-const readyset = path.join(__dirname, 'jsons/readyset.json');
-const BreakData = path.join(__dirname, 'jsons/BreakData.json');
+// Yazılabilir klasörleri EXE dışında oluştur
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const outputFolder = path.join(process.cwd(), 'outputs'); // EXE yanında yazılabilir
+if (!fs.existsSync(outputFolder)) {
+  fs.mkdirSync(outputFolder, { recursive: true });
+}
+
+const outputFile = path.join(outputFolder, 'outputs.xlsx');
+
+const readDataFilePath = path.join(dataDir, 'ReadData.json');
+const stationUserFilePath = path.join(dataDir, 'stationuser.json');
+const readyset = path.join(dataDir, 'readyset.json');
+const BreakData = path.join(dataDir, 'BreakData.json');
 
 const cleanJsonFiles = async () => {
   try {

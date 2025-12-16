@@ -2,8 +2,15 @@ const XLSX = require('xlsx');
 const path = require('path');
 const fs = require('fs');
 
-const jsonFilePath = path.join(__dirname, 'jsons/barcodes.json');
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
 
+// Yazılabilir klasörleri EXE dışında oluştur
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const jsonFilePath = path.join(dataDir, 'barcodes.json');
 
 let dataArray = {};
 

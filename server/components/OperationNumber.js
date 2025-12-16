@@ -1,9 +1,14 @@
 const path = require('path');
 const fs = require('fs');
 
-const jsonFilePath = path.join(__dirname, 'jsons/input.json');
-const datajson = path.join(__dirname, 'jsons/ReadData.json');
-const stationsjson = path.join(__dirname, 'jsons/stationuser.json');
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+
+const jsonFilePath = path.join(dataDir, 'input.json');
+const datajson = path.join(dataDir, 'ReadData.json');
+const stationsjson = path.join(dataDir, 'stationuser.json');
+
 
 const OperationNumber = async (req, res) => {
     try {

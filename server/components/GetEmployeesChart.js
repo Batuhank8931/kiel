@@ -1,11 +1,21 @@
 const path = require('path');
 const fs = require('fs');
+const fsp = fs.promises;   
 
-const stationsjson = path.join(__dirname, 'jsons/stationuser.json');
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+// Yazılabilir klasörleri EXE dışında oluştur
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const stationsjson = path.join(dataDir, 'stationuser.json');
+
 
 const GetEmployeesChart = async (req, res) => {
     try {
-        const stationsData = await fs.promises.readFile(stationsjson, 'utf8');
+        const stationsData = await fsp.readFile(stationsjson, 'utf8');
 
         let stationsList = [];
 

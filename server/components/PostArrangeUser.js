@@ -1,8 +1,17 @@
 const fs = require("fs");
 const path = require("path");
 
-const usersFilePath = path.join(__dirname, "jsons/users.json");
-const stationUserFilePath = path.join(__dirname, "jsons/stationuser.json");
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+// Yazılabilir klasörleri EXE dışında oluştur
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const usersFilePath = path.join(dataDir, 'users.json');
+const stationUserFilePath = path.join(dataDir, 'stationuser.json');
+
 
 const SetUsertoStation = async (req, res) => {
     try {

@@ -1,7 +1,15 @@
 const fs = require("fs");
 const path = require("path");
 
-const filePath = path.join(__dirname, "jsons/readyset.json");
+// EXE uyumlu klasörler
+const dataDir = path.join(path.dirname(process.execPath), 'data', 'jsons');
+
+// Yazılabilir klasörleri EXE dışında oluştur
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+
+const filePath = path.join(dataDir, 'readyset.json');
 
 const PostReady = async (req, res) => {
     try {
